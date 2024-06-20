@@ -15,7 +15,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/users/admin").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/users/login")
+                        .failureUrl("/users/login?error=true")
+                        .defaultSuccessUrl("/users/home", true)
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/users/login").permitAll());
         return httpSecurity.build();
     }
 
@@ -23,4 +33,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
