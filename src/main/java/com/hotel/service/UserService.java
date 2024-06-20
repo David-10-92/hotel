@@ -9,4 +9,5 @@ public interface UserService {
     User createUser(UserDTO input);
     Optional<User> editUser(Long id, UserDTO input);
     boolean deleteUser(Long id);
+    boolean isEmailAlreadyInUse(String email);
 }

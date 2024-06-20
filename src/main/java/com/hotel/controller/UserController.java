@@ -4,7 +4,8 @@ import com.hotel.dtos.UserDTO;
 import com.hotel.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,24 +18,43 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/new")
+    @GetMapping("/registerUser")
     public String newUserForm(Model model){
         model.addAttribute("userDTO",new UserDTO());
-        return "new";
+        return "registerUser";
     }
 
-    @PostMapping("/new")
-    public String createUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult){
+    @PostMapping("/registerUser")
+    public String createUser(@Valid @ModelAttribute("userDTO") UserDTO userDTO,
+                             BindingResult bindingResult,Model model){
+
         if (bindingResult.hasErrors()) {
-            return "new";
+            return "registerUser";
+        }
+        if (userService.isEmailAlreadyInUse(userDTO.getEmail())) {
+            model.addAttribute("emailError", "Este correo electrónico ya está registrado. Por favor, elija otro.");
+            return "registerUser";
         }
         userService.createUser(userDTO);
-        return "home";
+        return "login";
+    }
+
+    @GetMapping("/login")
+    public String loginPage(Model model, @RequestParam(value = "error", required = false) String error) {
+        return "login";
     }
 
     @GetMapping("/home")
-    public String basic(){
+    public String home(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        model.addAttribute("username", username);
         return "home";
+    }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "admin";
     }
 
     @PutMapping("/edit/{id}")

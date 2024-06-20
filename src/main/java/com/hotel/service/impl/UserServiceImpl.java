@@ -1,7 +1,8 @@
-package com.hotel.service;
+package com.hotel.service.impl;
 import com.hotel.dtos.UserDTO;
 import com.hotel.model.User;
 import com.hotel.repository.UserRepository;
+import com.hotel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,10 @@ public class UserServiceImpl implements UserService {
             userRepository.delete(user);
             return true;
         }).orElse(false);
+    }
+
+    @Override
+    public boolean isEmailAlreadyInUse(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
