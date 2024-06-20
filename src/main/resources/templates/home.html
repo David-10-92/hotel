@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
 <body>
 <h1>Home</h1>
+<p>Welcome, <span th:text="${username}"></span>!</p>
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+    <a th:href="@{/users/admin}">admin</a>
+</div>
+<div sec:authorize="isAuthenticated()">
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar sesión</button>
+    </form>
+</div>
 </body>
 </html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<div>
+    <h2>Login</h2>
+    <div th:if="${param.error}" class="alert alert-danger">
+        <p>Email o contraseña incorrectos. Por favor, inténtelo de nuevo.</p>
+    </div>
+    <form th:action="@{/users/login}" method="post">
+        <div>
+            <label for="username">Email:</label>
+            <input type="email" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

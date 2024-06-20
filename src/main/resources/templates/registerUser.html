@@ -6,7 +6,7 @@
 </head>
 <body>
 <h2>Create New User</h2>
-<form th:action="@{/users/new}" th:object="${userDTO}" method="post">
+<form th:action="@{/users/registerUser}" th:object="${userDTO}" method="post">
     <div>
         <label>Username:</label>
         <input type="text" th:field="*{username}" />
@@ -16,6 +16,7 @@
         <label>Email:</label>
         <input type="email" th:field="*{email}" />
         <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        <span th:if="${emailError}" th:text="${emailError}"></span>
     </div>
     <div>
         <label>Password:</label>
@@ -23,8 +24,12 @@
         <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     </div>
     <div>
-        <label>Rol:</label>
-        <input type="text" th:field="*{rol}" />
+        <label for="rol">Rol:</label>
+        <select id="rol" th:field="*{rol}">
+            <option value="ROLE_ADMIN">Admin</option>
+            <option value="ROLE_MANAGER">Manager</option>
+            <option value="ROLE_CLIENT">Client</option>
+        </select>
         <span th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></span>
     </div>
     <!-- Otros campos según sea necesario -->
