@@ -24,16 +24,10 @@
         <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     </div>
     <div>
-        <label for="rol">Rol:</label>
-        <select id="rol" th:field="*{rol}">
-            <option value="ROLE_ADMIN">Admin</option>
-            <option value="ROLE_MANAGER">Manager</option>
-            <option value="ROLE_CLIENT">Client</option>
-        </select>
-        <span th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></span>
+        <input type="hidden" th:field="*{rol}" value="ROLE_CLIENT" />
     </div>
-    <!-- Otros campos según sea necesario -->
-    <button type="submit">Create</button>
-</form>
+    <div>
+        <button type="submit">Registrar</button>
+    </div></form>
 </body>
 </html>

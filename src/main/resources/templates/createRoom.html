@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Create Room</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
 </head>
 <body>
-$END$
+<h1>Create Room</h1>
+<form th:action="@{/rooms/createRoom}" th:object="${roomDTO}" method="post">
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" />
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+    </div>
+    <div>
+        <label for="typeRoom">Type Room ID:</label>
+        <input type="text" id="typeRoom" th:field="*{typeRoom}" />
+        <span th:if="${#fields.hasErrors('typeRoom')}" th:errors="*{typeRoom}"></span>
+    </div>
+    <div>
+        <label for="location">Location:</label>
+        <input type="text" id="location" th:field="*{location}" />
+        <span th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></span>
+    </div>
+    <div>
+        <label for="nightPrice">Night Price:</label>
+        <input type="text" id="nightPrice" th:field="*{nightPrice}" />
+        <span th:if="${#fields.hasErrors('nightPrice')}" th:errors="*{nightPrice}"></span>
+    </div>
+    <div>
+        <label for="numbersRoom">Number of Rooms:</label>
+        <input type="text" id="numbersRoom" th:field="*{numbersRoom}" />
+        <span th:if="${#fields.hasErrors('numbersRoom')}" th:errors="*{numbersRoom}"></span>
+    </div>
+    <div>
+        <label for="images">Images:</label>
+        <input type="text" id="images" th:field="*{images}" />
+        <span th:if="${#fields.hasErrors('images')}" th:errors="*{images}"></span>
+    </div>
+    <div>
+        <button type="submit">Crear habitacion</button>
+    </div>
+</form>
 </body>
 </html>

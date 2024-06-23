@@ -1,4 +1,4 @@
-package com.hotel.dtos;
+package com.hotel.user.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -20,6 +20,5 @@ public class UserDTO {
     @NotBlank(message = "La password es obligatoria")
     @Size(min = 6, message = "La password debe tener al menos 6 caracteres")
     private String password;
-    @NotBlank
-    private String rol;
+    private String rol = "ROLE_CLIENT";
 }

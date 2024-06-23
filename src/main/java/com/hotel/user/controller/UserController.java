@@ -1,7 +1,9 @@
-package com.hotel.controller;
+package com.hotel.user.controller;
 
-import com.hotel.dtos.UserDTO;
-import com.hotel.service.UserService;
+
+import com.hotel.erros.EmailAlreadyInUseException;
+import com.hotel.user.dtos.UserDTO;
+import com.hotel.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -31,16 +33,19 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return "registerUser";
         }
-        if (userService.isEmailAlreadyInUse(userDTO.getEmail())) {
-            model.addAttribute("emailError", "Este correo electrónico ya está registrado. Por favor, elija otro.");
+
+        try {
+            userService.createUser(userDTO);
+        } catch (EmailAlreadyInUseException e) {
+            model.addAttribute("emailError", e.getMessage());
             return "registerUser";
         }
-        userService.createUser(userDTO);
+
         return "login";
     }
 
     @GetMapping("/login")
-    public String loginPage(Model model, @RequestParam(value = "error", required = false) String error) {
+    public String loginPage(Model model,@RequestParam(value = "error", required = false) String error) {
         return "login";
     }
 

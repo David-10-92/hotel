@@ -1,6 +1,7 @@
-package com.hotel.service.impl;
+package com.hotel.user.service.impl;
 
-import com.hotel.repository.UserRepository;
+
+import com.hotel.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,8 +1,10 @@
-package com.hotel.service.impl;
-import com.hotel.dtos.UserDTO;
-import com.hotel.model.User;
-import com.hotel.repository.UserRepository;
-import com.hotel.service.UserService;
+package com.hotel.user.service.impl;
+
+import com.hotel.erros.EmailAlreadyInUseException;
+import com.hotel.user.dtos.UserDTO;
+import com.hotel.user.model.User;
+import com.hotel.user.repository.UserRepository;
+import com.hotel.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(UserDTO input) {
+        if (isEmailAlreadyInUse(input.getEmail())) {
+            throw new EmailAlreadyInUseException("Este correo electrónico ya está registrado. Por favor, elija otro.");
+        }
         User user = new User();
         user.setUsername(input.getUsername());
         user.setEmail(input.getEmail());

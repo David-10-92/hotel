@@ -1,7 +1,7 @@
-package com.hotel.service;
+package com.hotel.user.service;
 
-import com.hotel.dtos.UserDTO;
-import com.hotel.model.User;
+import com.hotel.user.dtos.UserDTO;
+import com.hotel.user.model.User;
 
 import java.util.Optional;
 

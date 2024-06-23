@@ -1,7 +1,5 @@
-package com.hotel.repository;
-
-import com.hotel.dtos.UserDTO;
-import com.hotel.model.User;
+package com.hotel.user.repository;
+import com.hotel.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

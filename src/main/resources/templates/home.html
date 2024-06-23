@@ -15,5 +15,8 @@
         <button type="submit">Cerrar sesión</button>
     </form>
 </div>
+<div  sec:authorize="hasRole('ROLE_ADMIN')">
+    <a th:href="@{/rooms/createRoom}">Create room</a>
+</div>
 </body>
 </html>

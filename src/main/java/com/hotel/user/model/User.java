@@ -1,4 +1,4 @@
-package com.hotel.model;
+package com.hotel.user.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,4 +27,5 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(rol));
     }
+
 }
