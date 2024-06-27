@@ -5,20 +5,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
 
 @Setter
 @Getter
 public class UserDTO {
 
-    @NotBlank(message = "El username es obligatorio")
-    @Size(min = 3, max = 15, message = "El username debe tener entre 3 y 15 caracteres")
+    private Long id;
+    @NotBlank
+    @Size(min = 3, max = 15)
     private String username;
     @Email
     @NotBlank
     private String email;
-    @NotBlank(message = "La password es obligatoria")
-    @Size(min = 6, message = "La password debe tener al menos 6 caracteres")
+    @NotBlank(message = "La password es obligatoria, debe tener al menos 6 caracteres")
+    @Size(min = 6)
     private String password;
     private String rol = "ROLE_CLIENT";
 }

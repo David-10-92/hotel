@@ -10,4 +10,6 @@ public interface UserService {
     Optional<User> editUser(Long id, UserDTO input);
     boolean deleteUser(Long id);
     boolean isEmailAlreadyInUse(String email);
+    Optional<User> findUserById(Long id);
+    UserDTO getCurrentUserDTO();
 }

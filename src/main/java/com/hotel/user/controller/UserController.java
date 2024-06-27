@@ -2,6 +2,7 @@ package com.hotel.user.controller;
 
 
 import com.hotel.erros.EmailAlreadyInUseException;
+import com.hotel.room.service.RoomService;
 import com.hotel.user.dtos.UserDTO;
 import com.hotel.user.service.UserService;
 import jakarta.validation.Valid;
@@ -13,12 +14,16 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    RoomService roomService;
 
     @GetMapping("/registerUser")
     public String newUserForm(Model model){
@@ -54,6 +59,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         model.addAttribute("username", username);
+        model.addAttribute("rooms", roomService.getAllRooms());
         return "home";
     }
 
@@ -62,19 +68,30 @@ public class UserController {
         return "admin";
     }
 
-    @PutMapping("/edit/{id}")
-    public String updateUser(@PathVariable Long id, @Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "user/edit";
-        }
-        userService.editUser(id,userDTO);
-        return "redirect:/users/";
+    @GetMapping("/editUser")
+    public String showEditProfileForm(Model model) {
+        UserDTO userDTO = userService.getCurrentUserDTO();
+        model.addAttribute("userDTO", userDTO);
+        return "editUser";
     }
 
+    @PostMapping("/editUser/{id}")
+    public String updateUser(@PathVariable Long id, @Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "editUser";
+        }
+        userService.editUser(id, userDTO);
+        return "redirect:/users/home";
+    }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    @GetMapping("/deleteUser")
+    public String deleteUser() {
+        return "deleteUser";
+    }
+
+    @PostMapping("/deleteUser")
+    public String deleteUser(@RequestParam Long id) {
         userService.deleteUser(id);
-        return "redirect:/users/";
+        return "redirect:/users/home";
     }
 }

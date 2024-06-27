@@ -5,7 +5,10 @@ import com.hotel.user.dtos.UserDTO;
 import com.hotel.user.model.User;
 import com.hotel.user.repository.UserRepository;
 import com.hotel.user.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +36,46 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getCurrentUserDTO() {
+        // Obtener la autenticación del contexto de seguridad
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Verificar si el usuario está autenticado
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Obtener el nombre de usuario del contexto de seguridad
+            String username = authentication.getName();
+
+            // Buscar el usuario en la base de datos por nombre de usuario
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+            // Mapear el usuario a un DTO y devolverlo
+            return mapUserToDTO(user);
+        } else {
+            throw new EntityNotFoundException("Usuario no autenticado");
+        }
+    }
+
+    private UserDTO mapUserToDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId()); // Incluir el id si es necesario
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setRol(user.getRol()); // Considera cómo mapear el rol si es necesario
+        // Otros campos que desees mapear del usuario a DTO
+
+        return userDTO;
+    }
+
+    @Override
     public Optional<User> editUser(Long id, UserDTO input) {
-        return userRepository.findById(id).map(user -> {
+        UserDTO currentUser = getCurrentUserDTO();
+        return userRepository.findById(currentUser.getId()).map(user -> {
                     user.setUsername(input.getUsername());
                     user.setEmail(input.getEmail());
+                if (input.getPassword() != null && !input.getPassword().isEmpty()) {
                     user.setPassword(passwordEncoder.encode(input.getPassword()));
+                }
                     user.setRol(input.getRol());
                     return userRepository.save(user);
                 });
@@ -55,4 +93,10 @@ public class UserServiceImpl implements UserService {
     public boolean isEmailAlreadyInUse(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    public Optional<User> findUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
 }

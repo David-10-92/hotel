@@ -18,13 +18,15 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Crear usuario administrador
-        UserDTO adminDTO = new UserDTO();
-        adminDTO.setUsername("david");
-        adminDTO.setEmail("d_cazalla_b@hotmail.com");
-        adminDTO.setPassword(passwordEncoder.encode("123456")); // Encriptar la contraseña
-        adminDTO.setRol("ROLE_ADMIN");
+        if(!userService.isEmailAlreadyInUse("d_cazalla_b@hotmail.com")){
+            // Crear usuario administrador
+            UserDTO adminDTO = new UserDTO();
+            adminDTO.setUsername("david");
+            adminDTO.setEmail("d_cazalla_b@hotmail.com");
+            adminDTO.setPassword("123456"); // Encriptar la contraseña
+            adminDTO.setRol("ROLE_ADMIN");
 
-        userService.createUser(adminDTO);
+            userService.createUser(adminDTO);
+        }
     }
 }
