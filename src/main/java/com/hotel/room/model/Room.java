@@ -16,8 +16,9 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String image;
     private List<String> images;
     private String typeRoom;
     private Double nightPrice;
-    private int numberRoom;
+    private int numbersRoom;
 }

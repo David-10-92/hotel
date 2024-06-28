@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Habitación</title>
+</head>
+<body>
+
+<h1>Editar Habitación</h1>
+<form th:action="@{'/rooms/editRoom/' + ${room.id}}" th:object="${room}" method="post">
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" th:value="*{name}">
+    <br>
+    <label for="nightPrice">Precio por Noche:</label>
+    <input type="text" id="nightPrice" name="nightPrice" th:value="*{nightPrice}">
+    <br>
+    <label for="numbersRoom">Número de Habitación:</label>
+    <input type="text" id="numbersRoom" name="numbersRoom" th:value="*{numbersRoom}">
+    <br>
+    <label for="typeRoom">Tipo de Habitación:</label>
+    <input type="text" id="typeRoom" name="typeRoom" th:value="*{typeRoom}">
+    <br>
+    <label for="image">Imagen:</label>
+    <input type="text" id="image" name="image" th:value="*{image}">
+    <br>
+    <button type="submit">Guardar</button>
+</form>
+
+</body>
+</html>
