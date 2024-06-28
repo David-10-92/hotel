@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Imagen</title>
+</head>
+<body>
+<h1>Editar Imagen</h1>
+<a th:href="@{/images/listImages}">Volver</a>
+
+<form th:action="@{'/images/editImage/' + ${image.id}}" method="post">
+    <input type="hidden" th:value="${image.id}" name="id"/>
+    <label for="imageUrl">URL de la Imagen:</label>
+    <input type="text" id="imageUrl" name="imageUrl" th:value="${image.imageUrl}" required/><br/>
+
+    <label for="typeImage">Tipo de Imagen:</label>
+    <input type="text" id="typeImage" name="typeImage" th:value="${image.typeImage}" required/><br/>
+
+    <button type="submit">Guardar</button>
+</form>
+
+</body>
+</html>

@@ -35,6 +35,9 @@
         <li sec:authorize="hasRole('ROLE_ADMIN')">
             <a th:href="@{/images/createImage}">Crear imagen</a>
         </li>
+        <li sec:authorize="hasRole('ROLE_ADMIN')">
+            <a th:href="@{/images/listImages}">Lista imagenes</a>
+        </li>
         <!-- Botones de Editar Perfil y Eliminar Usuario (visible para usuarios autenticados) -->
         <li sec:authorize="isAuthenticated()">
             <a th:href="@{/users/editUser}">Editar Perfil</a>

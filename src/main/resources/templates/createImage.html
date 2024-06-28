@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Image</title>
+</head>
+<body>
+
+<h2>Crear imagen</h2>
+
+<form th:action="@{/images/createImage}" th:object="${imageDTO}" method="post">
+    <div>
+        <label for="imageUrl">Imagen:</label>
+        <input type="text" id="imageUrl" name="imageUrl"/>
+        <div th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></div>
+    </div>
+    <div>
+        <label for="typeImage">Type:</label>
+        <input type="text" id="typeImage" name="typeImage"/>
+        <div th:if="${#fields.hasErrors('typeImage')}" th:errors="*{typeImage}"></div>
+    </div>
+    <br>
+    <div>
+        <button type="submit">Crear imagen</button>
+    </div>
+</form>
+
+</body>
+</html>
