@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Editar Habitación</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-
-<h1>Editar Habitación</h1>
-<form th:action="@{'/rooms/editRoom/' + ${room.id}}" th:object="${room}" method="post">
-    <label for="name">Nombre:</label>
-    <input type="text" id="name" name="name" th:value="*{name}">
-    <br>
-    <label for="nightPrice">Precio por Noche:</label>
-    <input type="text" id="nightPrice" name="nightPrice" th:value="*{nightPrice}">
-    <br>
-    <label for="numbersRoom">Número de Habitación:</label>
-    <input type="text" id="numbersRoom" name="numbersRoom" th:value="*{numbersRoom}">
-    <br>
-    <label for="typeRoom">Tipo de Habitación:</label>
-    <input type="text" id="typeRoom" name="typeRoom" th:value="*{typeRoom}">
-    <br>
-    <label for="image">Imagen:</label>
-    <input type="text" id="image" name="image" th:value="*{image}">
-    <br>
-    <button type="submit">Guardar</button>
-</form>
-
+<div class="container">
+    <h1>Editar Habitación</h1>
+    <form th:action="@{'/rooms/editRoom/' + ${room.id}}" th:object="${room}" method="post">
+        <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input type="text" class="form-control" id="name" name="name" th:value="*{name}" required>
+        </div>
+        <div class="form-group">
+            <label for="nightPrice">Precio por Noche:</label>
+            <input type="text" class="form-control" id="nightPrice" name="nightPrice" th:value="*{nightPrice}" required>
+        </div>
+        <div class="form-group">
+            <label for="numbersRoom">Número de Habitación:</label>
+            <input type="text" class="form-control" id="numbersRoom" name="numbersRoom" th:value="*{numbersRoom}" required>
+        </div>
+        <div class="form-group">
+            <label for="typeRoom">Tipo de Habitación:</label>
+            <input type="text" class="form-control" id="typeRoom" name="typeRoom" th:value="*{typeRoom}" required>
+        </div>
+        <div class="form-group">
+            <label for="image">Imagen:</label>
+            <input type="text" class="form-control" id="image" name="image" th:value="*{image}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+

@@ -4,38 +4,54 @@
     <meta charset="UTF-8">
     <title>Create Room</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .error-message {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-<h1>Create Room</h1>
-<form th:action="@{/rooms/createRoom}" th:object="${roomDTO}" method="post" enctype="multipart/form-data">
-    <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" th:field="*{name}" />
-        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
-    </div>
-    <div>
-        <label for="typeRoom">Type Room ID:</label>
-        <input type="text" id="typeRoom" th:field="*{typeRoom}" />
-        <span th:if="${#fields.hasErrors('typeRoom')}" th:errors="*{typeRoom}"></span>
-    </div>
-    <div>
-        <label for="nightPrice">Night Price:</label>
-        <input type="text" id="nightPrice" th:field="*{nightPrice}" />
-        <span th:if="${#fields.hasErrors('nightPrice')}" th:errors="*{nightPrice}"></span>
-    </div>
-    <div>
-        <label for="numbersRoom">Number of Rooms:</label>
-        <input type="text" id="numbersRoom" th:field="*{numbersRoom}" />
-        <span th:if="${#fields.hasErrors('numbersRoom')}" th:errors="*{numbersRoom}"></span>
-    </div>
-    <div>
-        <label for="image">Images:</label>
-        <input type="text" id="image" th:field="*{image}" />
-        <span th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></span>
-    </div>
-    <div>
-        <button type="submit">Crear habitacion</button>
-    </div>
-</form>
+<div class="container">
+    <h1>Create Room</h1>
+    <nav class="mb-4">
+        <a class="btn btn-primary" th:href="@{/users/home}">Home</a>
+    </nav>
+    <form th:action="@{/rooms/createRoom}" th:object="${roomDTO}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" />
+            <span class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+        </div>
+        <div class="form-group">
+            <label for="typeRoom">Type Room:</label>
+            <input type="text" class="form-control" id="typeRoom" th:field="*{typeRoom}" />
+            <span class="error-message" th:if="${#fields.hasErrors('typeRoom')}" th:errors="*{typeRoom}"></span>
+        </div>
+        <div class="form-group">
+            <label for="nightPrice">Night Price:</label>
+            <input type="text" class="form-control" id="nightPrice" th:field="*{nightPrice}" />
+            <span class="error-message" th:if="${#fields.hasErrors('nightPrice')}" th:errors="*{nightPrice}"></span>
+        </div>
+        <div class="form-group">
+            <label for="numbersRoom">Number of Rooms:</label>
+            <input type="text" class="form-control" id="numbersRoom" th:field="*{numbersRoom}" />
+            <span class="error-message" th:if="${#fields.hasErrors('numbersRoom')}" th:errors="*{numbersRoom}"></span>
+        </div>
+        <div class="form-group">
+            <label for="image">Images:</label>
+            <input type="text" class="form-control" id="image" name="image" accept="image/*" />
+            <span class="error-message" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Crear habitación</button>
+        </div>
+    </form>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

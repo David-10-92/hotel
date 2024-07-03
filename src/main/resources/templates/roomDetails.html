@@ -6,61 +6,49 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .room-image {
-            max-width: 100%;
-            height: auto;
+            width: 100%;
+            height: 400px; /* Define a fixed height for uniformity */
+            object-fit: cover; /* Ensure the image covers the area */
+        }
+        .carousel-inner {
+            width: 100%;
+            max-height: 400px; /* Limit the height of the carousel */
         }
     </style>
 </head>
 <body>
 <div class="container mt-4">
-    <a th:href="@{/rooms/listRooms}">Volver</a>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-12">
             <h1 th:text="${room.name}">Room Name</h1>
+        </div>
+        <div class="col-12 mt-4">
             <p><strong>Precio Noche:</strong> <span th:text="${room.nightPrice}">Night Price</span></p>
-            <p><strong>Number of Rooms Available:</strong> <span th:text="${room.numbersRoom}">Number of Rooms</span></p>
         </div>
-        <div class="col-md-4">
-            <h2>Images:</h2>
-            <div th:each="image : ${room.images}">
-                <img th:src="${image}" alt="Room Image" class="room-image img-thumbnail mb-2"/>
+        <div class="col-12">
+            <!-- Carousel -->
+            <div id="imageCarousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <!-- Iterate over images -->
+                    <div th:each="image, iterStat : ${landscapeImages}" class="carousel-item" th:classappend="${iterStat.index == 0} ? 'active'">
+                        <img th:src="${image}" class="d-block w-100 room-image" alt="Room Image">
+                    </div>
+                </div>
+                <!-- Controls -->
+                <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
             </div>
         </div>
     </div>
-    <hr>
-    <h2>Make a Reservation</h2>
-    <div th:if="${!isAvailable}">
-        <div class="alert alert-danger" role="alert">
-            Room is not available for the selected dates.
-        </div>
-    </div>
-    <form th:action="@{/reservations/create}" method="post" enctype="application/x-www-form-urlencoded">
-        <input type="hidden" name="roomId" th:value="${room.id}">
-        <input type="hidden" name="userId" value="1"> <!-- Aquí deberías manejar la autenticación y obtener el userId actual -->
-
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="checkInDate">Check-in Date:</label>
-                <input type="date" class="form-control" id="checkInDate" name="checkInDate"
-                       th:value="${checkInDate}">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="checkOutDate">Check-out Date:</label>
-                <input type="date" class="form-control" id="checkOutDate" name="checkOutDate"
-                       th:value="${checkOutDate}">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="numberOfRooms">Number of Rooms:</label>
-                <input type="number" class="form-control" id="numberOfRooms" name="numberOfRooms"
-                       min="1" max="${room.numbersRoom}" required>
-            </div>
-        </div>
-        <button th:if="${isAvailable}" type="submit" class="btn btn-primary">Reserve Now</button>
-    </form>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
 

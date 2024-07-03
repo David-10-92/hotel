@@ -7,10 +7,13 @@ import com.hotel.room.model.Room;
 import com.hotel.room.repository.ImageRepository;
 import com.hotel.room.repository.RoomRepository;
 import com.hotel.room.service.RoomService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,27 +36,28 @@ public class RoomServiceImpl implements RoomService {
         room.setName(input.getName());
         room.setNightPrice(input.getNightPrice());
         room.setNumbersRoom(input.getNumbersRoom());
-        Optional<Image> image = imageRepository.findByImageUrl("/uploads/" + input.getImage() + ".jpg");
-        String url = image.get().getImageUrl();
-        room.setImage(url);
+
+        imageRepository.findByImageUrl("/uploads/" + input.getImage() + ".jpg").ifPresentOrElse(image -> {
+            room.setImage(image.getImageUrl());
+        }, () -> {
+            throw new EntityNotFoundException("Imagen no encontrada");
+        });
+
         room.setTypeRoom(input.getTypeRoom());
-        List<Image> images = imageRepository.findByTypeImage(room.getTypeRoom());
-        List<String> imageUrls = images.stream()
+
+        List<String> imageUrls = imageRepository.findByTypeImage(room.getTypeRoom())
+                .stream()
                 .map(Image::getImageUrl)
                 .toList();
         room.setImages(imageUrls);
-        roomRepository.save(room);
-        return room;
+
+        return roomRepository.save(room);
     }
 
     @Override
     public Optional<Room> editRoom(Long id, RoomDTO input) {
         return roomRepository.findById(id).map(room -> {
-            room.setName(input.getName());
-            room.setNightPrice(input.getNightPrice());
-            room.setNumbersRoom(input.getNumbersRoom());
-            room.setTypeRoom(input.getTypeRoom());
-            room.setImage(input.getImage());
+            updateRoomFields(room, input);
             return roomRepository.save(room);
         });
     }
@@ -79,9 +83,43 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Room> findAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate) {
         List<Room> allRooms = roomRepository.findAll();
-        return allRooms.stream().filter(room -> {
-            int reservedCount = reservationRepository.countReservationsByRoomAndDateRange(room, checkInDate, checkOutDate);
-            return reservedCount < room.getNumbersRoom();
-        }).collect(Collectors.toList());
+        return allRooms.stream()
+                .filter(room -> isRoomAvailable(room, checkInDate, checkOutDate))
+                .collect(Collectors.toList());
+    }
+
+    private void updateRoomFields(Room room, RoomDTO input) {
+        room.setName(input.getName());
+        room.setNightPrice(input.getNightPrice());
+        room.setNumbersRoom(input.getNumbersRoom());
+        room.setTypeRoom(input.getTypeRoom());
+        room.setImage(input.getImage());
+    }
+
+    private boolean isRoomAvailable(Room room, LocalDate checkInDate, LocalDate checkOutDate) {
+        int reservedCount = reservationRepository.countReservationsByRoomAndDateRange(room, checkInDate, checkOutDate);
+        return reservedCount < room.getNumbersRoom();
+    }
+
+    @Override
+    public int countAvailableRooms(Room room, LocalDate checkInDate, LocalDate checkOutDate) {
+        int reservedCount = reservationRepository.countReservationsByRoomAndDateRange(room, checkInDate, checkOutDate);
+        return room.getNumbersRoom() - reservedCount;
+    }
+
+    @Override
+    public List<String> getImagesByType(Long roomId, String type) {
+        Optional<Room> roomOptional = roomRepository.findById(roomId);
+        if (roomOptional.isPresent()) {
+            Room room = roomOptional.get();
+            List<String> filteredImages = new ArrayList<>();
+            for (Image image : imageRepository.findAll()) {
+                if (image.getTypeImage().equals(type)) {
+                    filteredImages.add(image.getImageUrl());
+                }
+            }
+            return filteredImages;
+        }
+        return Collections.emptyList();
     }
 }
