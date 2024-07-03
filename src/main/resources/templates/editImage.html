@@ -3,21 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Editar Imagen</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Editar Imagen</h1>
-<a th:href="@{/images/listImages}">Volver</a>
+<div class="container">
+    <h1>Editar Imagen</h1>
+    <a th:href="@{/images/listImages}" class="btn btn-secondary">Volver</a>
 
-<form th:action="@{'/images/editImage/' + ${image.id}}" method="post">
-    <input type="hidden" th:value="${image.id}" name="id"/>
-    <label for="imageUrl">URL de la Imagen:</label>
-    <input type="text" id="imageUrl" name="imageUrl" th:value="${image.imageUrl}" required/><br/>
+    <form th:action="@{'/images/editImage/' + ${image.id}}" method="post">
+        <input type="hidden" th:value="${image.id}" name="id"/>
+        <div class="form-group">
+            <label for="imageUrl">URL de la Imagen:</label>
+            <input type="text" class="form-control" id="imageUrl" name="imageUrl" th:value="${image.imageUrl}" required>
+        </div>
 
-    <label for="typeImage">Tipo de Imagen:</label>
-    <input type="text" id="typeImage" name="typeImage" th:value="${image.typeImage}" required/><br/>
+        <div class="form-group">
+            <label for="typeImage">Tipo de Imagen:</label>
+            <input type="text" class="form-control" id="typeImage" name="typeImage" th:value="${image.typeImage}" required>
+        </div>
 
-    <button type="submit">Guardar</button>
-</form>
-
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
