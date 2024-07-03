@@ -3,76 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+
+        .full-screen-img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .container-fluid {
+            padding: 0;
+        }
+
+        .list-group-item {
+            padding: 0;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+        }
+    </style>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-<nav>
-    <a href="#">Hotel Continental</a>
-    <ul>
-        <!-- Botón de Login -->
-        <li sec:authorize="!isAuthenticated()">
-            <a th:href="@{/users/login}">Login</a>
-        </li>
-        <!-- Bienvenida al usuario autenticado -->
-        <li sec:authorize="isAuthenticated()">
-            <span>Welcome, <span th:text="${username}"></span>!</span>
-        </li>
-        <!-- Botón de Cerrar Sesión -->
-        <li sec:authorize="isAuthenticated()">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit">Cerrar sesión</button>
-            </form>
-        </li>
-    </ul>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Hotel Continental</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item" sec:authorize="!isAuthenticated()">
+                <a class="nav-link" th:href="@{/users/login}">Login</a>
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+                <span class="nav-link">Welcome, <span th:text="${username}"></span>!</span>
+            </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+                <form class="form-inline" th:action="@{/logout}" method="post">
+                    <button class="btn btn-outline-danger" type="submit">Cerrar sesión</button>
+                </form>
+            </li>
+        </ul>
+    </div>
 </nav>
 
-<!-- Botones de Acciones -->
-<div>
-    <!-- Botones de Crear Habitación y Crear Imagen -->
-    <ul>
-        <li sec:authorize="hasRole('ROLE_ADMIN')">
-            <a th:href="@{/rooms/createRoom}">Crear habitación</a>
-        </li>
-        <li sec:authorize="hasRole('ROLE_ADMIN')">
-            <a th:href="@{/images/createImage}">Crear imagen</a>
-        </li>
-        <li sec:authorize="hasRole('ROLE_ADMIN')">
-            <a th:href="@{/images/listImages}">Lista imagenes</a>
-        </li>
-        <!-- Botones de Editar Perfil y Eliminar Usuario (visible para usuarios autenticados) -->
-        <li sec:authorize="isAuthenticated()">
-            <a th:href="@{/users/editUser}">Editar Perfil</a>
-        </li>
-        <li sec:authorize="hasRole('ROLE_ADMIN')">
-            <a th:href="@{/users/deleteUser}">Eliminar Usuario</a>
-        </li>
-    </ul>
-</div>
-
-<!-- Formulario de búsqueda de habitaciones -->
-<form th:action="@{/rooms/search}" method="get">
-    <label for="checkInDate">Check-in Date:</label>
-    <input type="date" id="checkInDate" name="checkInDate" required>
-
-    <label for="checkOutDate">Check-out Date:</label>
-    <input type="date" id="checkOutDate" name="checkOutDate" required>
-
-    <button type="submit">Buscar</button>
-</form>
-
-<!-- Listado de Habitaciones -->
-<div>
-    <ul th:each="room : ${rooms}">
-        <li>
-            <a th:href="@{'/rooms/' + ${room.id} + '?checkInDate=' + ${checkInDate} + '&checkOutDate=' + ${checkOutDate}}">
-                <img th:src="${room.image}" alt="Room Image">
-                <h5 th:text="${room.name}">Room Name</h5>
-                <p th:text="${room.nightPrice}">Night Price</p>
-            </a>
-        </li>
-    </ul>
+<div class="container-fluid p-0 position-relative">
+    <img src="/uploads/portada.jpg" class="img-fluid full-screen-img" alt="Imagen del Hotel">
+    <div class="row">
+        <div class="col">
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="btn btn-primary btn-block" th:href="@{/rooms/createRoom}">Crear habitación</a>
+                </li>
+                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="btn btn-primary btn-block" th:href="@{/images/createImage}">Crear imagen</a>
+                </li>
+                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="btn btn-primary btn-block" th:href="@{/images/listImages}">Lista imágenes</a>
+                </li>
+                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="btn btn-primary btn-block" th:href="@{/users/listUsers}">Lista usuarios</a>
+                </li>
+                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="btn btn-primary btn-block" th:href="@{/reservations/listReservations}">Lista reservas</a>
+                </li>
+                <li class="list-group-item flex-fill" sec:authorize="isAuthenticated()">
+                    <a class="btn btn-primary btn-block" th:href="@{/users/editUser}">Editar Perfil</a>
+                </li>
+                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="btn btn-danger btn-block" th:href="@{/users/deleteUser}">Eliminar Usuario</a>
+                </li>
+                <li class="list-group-item flex-fill">
+                    <a class="btn btn-secondary btn-block" th:href="@{/rooms/listRooms}">Habitaciones</a>
+                </li>
+                <li class="list-group-item flex-fill">
+                    <a class="btn btn-secondary btn-block" th:href="@{/reservations/listUserReservation}">Mis reservas</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 </body>
 </html>
-
 
