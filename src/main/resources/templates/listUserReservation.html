@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Reservations</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .pagination {
+            display: flex;
+            list-style-type: none;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination li {
+            margin: 0 5px;
+        }
+        .pagination li.active a {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Your Reservations</h1>
+    <nav class="mb-4">
+        <a class="btn btn-primary" th:href="@{/users/home}">Home</a>
+    </nav>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Username</th>
+            <th>DNI</th>
+            <th>Room</th>
+            <th>Check-in Date</th>
+            <th>Check-out Date</th>
+            <th>Number of Rooms</th>
+            <th>Night Price</th>
+            <th>Total Price</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="reservation : ${reservations}">
+            <td th:text="${reservation.id}"></td>
+            <td th:text="${reservation.name}"></td>
+            <td th:text="${reservation.username}"></td>
+            <td th:text="${reservation.dni}"></td>
+            <td th:text="${reservation.room.id}"></td>
+            <td th:text="${reservation.checkInDate}"></td>
+            <td th:text="${reservation.checkOutDate}"></td>
+            <td th:text="${reservation.numberOfRooms}"></td>
+            <td th:text="${reservation.nightPrice}"></td>
+            <td th:text="${reservation.totalPrice}"></td>
+            <td>
+                <form th:action="@{/reservations/deleteReservation/{id}(id=${reservation.id})}" method="post"
+                      th:if="${reservation.checkInDate.isAfter(T(java.time.LocalDate).now())}">
+                    <button type="submit" class="btn btn-danger">Cancel</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <ul class="pagination">
+        <li th:if="${currentPage > 0}" class="page-item">
+            <a class="page-link" th:href="@{/reservations/listUserReservation(page=${currentPage - 1}, size=${size})}">&laquo; Previous</a>
+        </li>
+        <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${pageNum == currentPage} ? 'active'">
+            <a class="page-link" th:href="@{/reservations/listUserReservation(page=${pageNum}, size=${size})}"
+               th:text="${pageNum + 1}"></a>
+        </li>
+        <li th:if="${currentPage < totalPages - 1}" class="page-item">
+            <a class="page-link" th:href="@{/reservations/listUserReservation(page=${currentPage + 1}, size=${size})}">Next &raquo;</a>
+        </li>
+    </ul>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
