@@ -1,17 +1,23 @@
 package com.hotel.user.service.impl;
 
 import com.hotel.erros.EmailAlreadyInUseException;
+import com.hotel.reservation.model.Reservation;
 import com.hotel.user.dtos.UserDTO;
 import com.hotel.user.model.User;
 import com.hotel.user.repository.UserRepository;
 import com.hotel.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,6 +62,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     private UserDTO mapUserToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId()); // Incluir el id si es necesario
@@ -97,6 +108,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public Page<User> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> reservationPage = userRepository.findAll(pageable);
+        List<User> reservationList = userRepository.findAll();
+        return new PageImpl<>(reservationList, pageable, reservationPage.getTotalElements());
     }
 
 }

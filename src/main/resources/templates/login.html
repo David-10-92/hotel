@@ -1,16 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            margin-top: 50px;
+        }
+        form div {
+            margin-bottom: 10px;
+        }
+        form label {
+            font-weight: bold;
+        }
+        form input[type="email"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+        form a {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
-<div>
+<div class="container">
     <h2>Login</h2>
+
     <div th:if="${param.error}" class="alert alert-danger">
         <p>Email o contraseña incorrectos. Por favor, inténtelo de nuevo.</p>
     </div>
-    <form th:action="@{/users/login}" method="post" onsubmit="logFormData(event)">
+
+    <form th:action="@{/users/login}" method="post">
         <div>
             <label for="username">Email:</label>
             <input type="email" id="username" name="username" required>
@@ -26,5 +75,7 @@
         </div>
     </form>
 </div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

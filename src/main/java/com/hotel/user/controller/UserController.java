@@ -2,11 +2,14 @@ package com.hotel.user.controller;
 
 
 import com.hotel.erros.EmailAlreadyInUseException;
+import com.hotel.reservation.model.Reservation;
 import com.hotel.room.service.RoomService;
 import com.hotel.user.dtos.UserDTO;
+import com.hotel.user.model.User;
 import com.hotel.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -93,5 +96,17 @@ public class UserController {
     public String deleteUser(@RequestParam Long id) {
         userService.deleteUser(id);
         return "redirect:/users/home";
+    }
+
+    @GetMapping("/listUsers")
+    public String searchReservations(Model model,
+                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                     @RequestParam(name = "size", defaultValue = "5") int size){
+        Page<User> usersPage = userService.getAllUsers(page,size);
+        model.addAttribute("users", usersPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", usersPage.getTotalPages());
+        model.addAttribute("totalItems", usersPage.getTotalElements());
+        return "listUsers";
     }
 }
