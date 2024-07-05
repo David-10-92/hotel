@@ -19,16 +19,10 @@
     <h1>Create Reservation</h1>
 
     <form th:action="@{/reservations/createReservation}" th:object="${reservationDTO}" method="post">
-        <div class="form-group">
-            <label for="roomId">Room ID:</label>
-            <input type="text" class="form-control" id="roomId" th:field="*{roomId}" required>
-            <span class="error-message" th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"></span>
-        </div>
-        <div class="form-group">
-            <label for="userId">User ID:</label>
-            <input type="text" class="form-control" id="userId" th:field="*{userId}" required>
-            <span class="error-message" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></span>
-        </div>
+
+        <input type="hidden" class="form-control" id="roomId" th:field="*{roomId}" required>
+        <input type="hidden" class="form-control" id="userId" th:field="*{userId}" required>
+
         <div class="form-group">
             <label for="name">Nombre:</label>
             <input type="text" class="form-control" id="name" th:field="*{name}" required>
