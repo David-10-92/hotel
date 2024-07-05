@@ -1,6 +1,7 @@
 package com.hotel.reservation.service.impl;
 
 import com.hotel.reservation.dtos.ReservationDTO;
+import com.hotel.reservation.dtos.ReservationParamsDTO;
 import com.hotel.reservation.model.Reservation;
 import com.hotel.reservation.repository.ReservationRepository;
 import com.hotel.reservation.service.ReservationService;
@@ -44,6 +45,18 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setTotalPrice(reservationDTO.getTotalPrice());
         reservation.setNightPrice(reservationDTO.getNightPrice());
         return reservationRepository.save(reservation);
+    }
+
+    @Override
+    public ReservationDTO prepareReservation(ReservationParamsDTO paramsDTO, User currentUser, Double totalPrice) {
+        ReservationDTO reservationDTO = new ReservationDTO();
+        reservationDTO.setRoomId(paramsDTO.getRoomId());
+        reservationDTO.setUserId(currentUser.getId());
+        reservationDTO.setCheckInDate(paramsDTO.getCheckInDate());
+        reservationDTO.setCheckOutDate(paramsDTO.getCheckOutDate());
+        reservationDTO.setTotalPrice(totalPrice);
+        reservationDTO.setNumberOfRooms(paramsDTO.getNumbersRoom());
+        return reservationDTO;
     }
 
     @Override

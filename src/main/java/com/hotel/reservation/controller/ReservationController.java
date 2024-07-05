@@ -39,44 +39,45 @@ public class ReservationController {
     public String formCreateReservation(@ModelAttribute("reservationParamsDTO") ReservationParamsDTO paramsDTO,
                                         Model model,
                                         RedirectAttributes redirectAttributes) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         Optional<User> currentUser = userService.findByUsername(currentUsername);
-        Double totalPrice = reservationService.totalPrice(paramsDTO.getCheckInDate(),
-                paramsDTO.getCheckOutDate(),paramsDTO.getNumbersRoom(), paramsDTO.getNightPrice());
-        Optional<Room> optionalRoom = roomService.getRoomById(paramsDTO.getRoomId());
-        Room room = optionalRoom.get();
-        LocalDate today = LocalDate.now();
-
-        if (paramsDTO.getCheckInDate() == null || paramsDTO.getCheckOutDate() == null || paramsDTO.getCheckInDate().isBefore(today) || paramsDTO.getCheckOutDate().isBefore(today)) {
-            redirectAttributes.addFlashAttribute("mensajeError2", "Las fechas no son válidas. Debe seleccionar fechas a partir de hoy.");
-            return "redirect:/rooms/listRooms";
-        }
 
         if (currentUser.isEmpty()) {
             // Manejar caso donde el usuario no está autenticado correctamente
             return "redirect:/users/login"; // Redirige al login si el usuario no está autenticado
         }
 
-        // Verificar el número de habitaciones disponibles para las fechas seleccionadas
-        int availableRooms = roomService.countAvailableRooms(room, paramsDTO.getCheckInDate(), paramsDTO.getCheckOutDate());
-
-        if (paramsDTO.getNumbersRoom() > availableRooms) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Solo quedan");
+        LocalDate today = LocalDate.now();
+        if (paramsDTO.getCheckInDate() == null || paramsDTO.getCheckOutDate() == null ||
+                paramsDTO.getCheckInDate().isBefore(today) || paramsDTO.getCheckOutDate().isBefore(today)) {
+            redirectAttributes.addFlashAttribute("mensajeError2", "Las fechas no son válidas. Debe seleccionar fechas a partir de hoy.");
             return "redirect:/rooms/listRooms";
         }
 
-        ReservationDTO reservationDTO = new ReservationDTO();
-        reservationDTO.setRoomId(paramsDTO.getRoomId());
-        reservationDTO.setUserId(currentUser.get().getId());
-        reservationDTO.setCheckInDate(paramsDTO.getCheckInDate());
-        reservationDTO.setCheckOutDate(paramsDTO.getCheckOutDate());
-        reservationDTO.setTotalPrice(totalPrice);
-        reservationDTO.setNumberOfRooms(paramsDTO.getNumbersRoom());
+        Optional<Room> optionalRoom = roomService.getRoomById(paramsDTO.getRoomId());
+        if (optionalRoom.isEmpty()) {
+            redirectAttributes.addFlashAttribute("mensajeError2", "La habitación seleccionada no existe.");
+            return "redirect:/rooms/listRooms";
+        }
 
-        model.addAttribute("reservationDTO", reservationDTO);
-        return "createReservation";
+        Room room = optionalRoom.get();
+        int availableRooms = roomService.countAvailableRooms(room, paramsDTO.getCheckInDate(), paramsDTO.getCheckOutDate());
+        if (paramsDTO.getNumbersRoom() > availableRooms) {
+            redirectAttributes.addFlashAttribute("mensajeError2", "Solo quedan " + availableRooms + " habitaciones disponibles para las fechas seleccionadas.");
+            return "redirect:/rooms/listRooms";
+        }
+
+        Double totalPrice = reservationService.totalPrice(paramsDTO.getCheckInDate(), paramsDTO.getCheckOutDate(), paramsDTO.getNumbersRoom(), paramsDTO.getNightPrice());
+
+        try {
+            ReservationDTO reservationDTO = reservationService.prepareReservation(paramsDTO, currentUser.get(), totalPrice);
+            model.addAttribute("reservationDTO", reservationDTO);
+            return "createReservation";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+            return "redirect:/rooms/listRooms";
+        }
     }
 
     @PostMapping("/createReservation")
