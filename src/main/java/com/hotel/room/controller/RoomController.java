@@ -8,6 +8,7 @@ import com.hotel.room.model.Room;
 import com.hotel.room.service.RoomService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,20 +30,20 @@ public class RoomController {
     RoomService roomService;
     @Autowired
     ReservationService reservationService;
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/createRoom")
     public String newRoomForm(Model model){
         model.addAttribute("roomDTO",new RoomDTO());
         return "createRoom";
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/createRoom")
-    public String createRoom(@Valid @ModelAttribute("roomDTO")RoomDTO roomDTO,
-                             Model model, BindingResult bindingResult){
+    public String createRoom(@Valid @ModelAttribute("roomDTO")RoomDTO roomDTO,BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return "createRoom";
         }
         roomService.createRoom(roomDTO);
-        return "redirect:/users/home";
+        return "redirect:/users/listRooms";
     }
 
     @GetMapping("/{id}")
@@ -87,7 +88,7 @@ public class RoomController {
         model.addAttribute("dateRange", dateRange);
         return "listRooms";
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/editRoom/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Optional<Room> room = roomService.getRoomById(id);
@@ -98,13 +99,17 @@ public class RoomController {
             return "redirect:/rooms/listRooms";
         }
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/editRoom/{id}")
-    public String updateRoom(@PathVariable Long id, @ModelAttribute RoomDTO roomDTO) {
+    public String updateRoom(@PathVariable Long id,@Valid @ModelAttribute("room") RoomDTO roomDTO,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "editRoom";
+        }
         roomService.editRoom(id, roomDTO);
         return "redirect:/rooms/listRooms";
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/deleteRoom/{id}")
     public String deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);

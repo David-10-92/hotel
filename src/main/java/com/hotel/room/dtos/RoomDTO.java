@@ -11,15 +11,15 @@ import java.util.List;
 @Setter
 public class RoomDTO {
     private Long id;
-    @NotBlank
+    @NotBlank(message = "El nombre de la habitación no puede estar en blanco. Por favor, proporcione un nombre válido.")
     private String name;
-    @NotBlank
+    @NotBlank(message = "El tipo de la habitación no puede estar en blanco. Por favor, especifique el tipo de la habitación.")
     private String typeRoom;
-    @NotBlank
+    @NotBlank(message = "La imagen de la habitación no puede estar en blanco. Por favor, proporcione una URL válida para la imagen.")
     private String image;
     private List<String> images;
-    @NotNull
+    @NotNull(message = "El precio por noche no puede ser nulo. Por favor, proporcione un precio válido.")
     private Double nightPrice;
-    @NotNull
+    @NotNull(message = "El número de habitaciones no puede ser nulo. Por favor, proporcione un número válido de habitaciones.")
     private int numbersRoom;
 }

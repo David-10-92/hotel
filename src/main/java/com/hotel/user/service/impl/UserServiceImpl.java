@@ -1,7 +1,6 @@
 package com.hotel.user.service.impl;
 
 import com.hotel.erros.EmailAlreadyInUseException;
-import com.hotel.reservation.model.Reservation;
 import com.hotel.user.dtos.UserDTO;
 import com.hotel.user.model.User;
 import com.hotel.user.repository.UserRepository;
@@ -81,6 +80,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> editUser(Long id, UserDTO input) {
         UserDTO currentUser = getCurrentUserDTO();
+        if(isEmailAlreadyInUse(input.getEmail()) && !currentUser.getEmail().equals(input.getEmail())){
+            throw new EmailAlreadyInUseException("Este correo electronico ya esta en uso. Por favor eliga otro");
+        }
         return userRepository.findById(currentUser.getId()).map(user -> {
                     user.setUsername(input.getUsername());
                     user.setEmail(input.getEmail());
