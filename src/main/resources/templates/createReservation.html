@@ -40,22 +40,22 @@
         </div>
         <div class="form-group">
             <label for="checkInDate">Check-in Date:</label>
-            <input type="text" class="form-control" id="checkInDate" th:field="*{checkInDate}" required>
+            <input type="text" class="form-control" id="checkInDate" th:field="*{checkInDate}" required readonly>
             <span class="error-message" th:if="${#fields.hasErrors('checkInDate')}" th:errors="*{checkInDate}"></span>
         </div>
         <div class="form-group">
             <label for="checkOutDate">Check-out Date:</label>
-            <input type="text" class="form-control" id="checkOutDate" th:field="*{checkOutDate}" required>
+            <input type="text" class="form-control" id="checkOutDate" th:field="*{checkOutDate}" required readonly>
             <span class="error-message" th:if="${#fields.hasErrors('checkOutDate')}" th:errors="*{checkOutDate}"></span>
         </div>
         <div class="form-group">
             <label for="numberOfRooms">Habitaciones:</label>
-            <input type="number" class="form-control" id="numberOfRooms" th:field="*{numberOfRooms}" required>
+            <input type="number" class="form-control" id="numberOfRooms" th:field="*{numberOfRooms}" required readonly>
             <span class="error-message" th:if="${#fields.hasErrors('numberOfRooms')}" th:errors="*{numberOfRooms}"></span>
         </div>
         <div class="form-group">
             <label for="totalPrice">Precio total:</label>
-            <input type="text" class="form-control" id="totalPrice" th:field="*{totalPrice}" required>
+            <input type="text" class="form-control" id="totalPrice" th:field="*{totalPrice}" required readonly>
             <span class="error-message" th:if="${#fields.hasErrors('totalPrice')}" th:errors="*{totalPrice}"></span>
         </div>
         <div class="form-group">

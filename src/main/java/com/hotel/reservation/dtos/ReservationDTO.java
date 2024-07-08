@@ -15,13 +15,13 @@ public class ReservationDTO {
     @NotNull
     private Long userId;
 
-    @NotBlank
+    @NotBlank(message = "El nombre del cliente no puede estar en blanco. Por favor, proporcione un nombre válido.")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "El apellido des usuario no puede estar en blanco. Por favor, proporcione un apellido de usuario válido.")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "El número de identificación (DNI) no puede estar en blanco. Por favor, proporcione un número válido.")
     private String dni;
 
     @NotNull
@@ -31,9 +31,10 @@ public class ReservationDTO {
     @NotNull
     @Future
     private LocalDate checkOutDate;
+    @NotNull
     private Double nightPrice;
 
-    @Min(1)
+    @Min(value = 1, message = "El número de habitaciones debe ser como mínimo 1.")
     private int numberOfRooms;
     @NotNull
     private Double totalPrice;
