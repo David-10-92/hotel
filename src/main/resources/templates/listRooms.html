@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -58,9 +58,9 @@
                                 <input type="hidden" name="userId" th:value="${userId}"/>
                                 <button type="submit" class="btn btn-success btn-sm">Reservar</button>
                             </form>
-                            <a th:href="@{'/rooms/editRoom/' + ${room.id}}" class="btn btn-warning btn-sm">Editar</a>
+                            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/rooms/editRoom/' + ${room.id}}" class="btn btn-warning btn-sm">Editar</a>
                             <form th:action="@{'/rooms/deleteRoom/' + ${room.id}}" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                <button sec:authorize="hasRole('ROLE_ADMIN')" type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                             </form>
                         </div>
                     </div>
