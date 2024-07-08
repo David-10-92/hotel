@@ -29,12 +29,10 @@
             <!-- Carousel -->
             <div id="imageCarousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
-                    <!-- Iterate over images -->
                     <div th:each="image, iterStat : ${landscapeImages}" class="carousel-item" th:classappend="${iterStat.index == 0} ? 'active'">
                         <img th:src="${image}" class="d-block w-100 room-image" alt="Room Image">
                     </div>
                 </div>
-                <!-- Controls -->
                 <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="sr-only">Previous</span>
@@ -47,7 +45,10 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>
 
