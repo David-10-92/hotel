@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Editar Habitación</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -11,23 +16,28 @@
     <form th:action="@{'/rooms/editRoom/' + ${room.id}}" th:object="${room}" method="post">
         <div class="form-group">
             <label for="name">Nombre:</label>
-            <input type="text" class="form-control" id="name" name="name" th:value="*{name}" required>
+            <input type="text" class="form-control" id="name" name="name" th:value="*{name}" >
+            <span class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
         </div>
         <div class="form-group">
             <label for="nightPrice">Precio por Noche:</label>
-            <input type="text" class="form-control" id="nightPrice" name="nightPrice" th:value="*{nightPrice}" required>
+            <input type="text" class="form-control" id="nightPrice" name="nightPrice" th:value="*{nightPrice}">
+            <span class="error-message" th:if="${#fields.hasErrors('nightPrice')}" th:errors="*{nightPrice}"></span>
         </div>
         <div class="form-group">
             <label for="numbersRoom">Número de Habitación:</label>
-            <input type="text" class="form-control" id="numbersRoom" name="numbersRoom" th:value="*{numbersRoom}" required>
+            <input type="text" class="form-control" id="numbersRoom" name="numbersRoom" th:value="*{numbersRoom}">
+            <span class="error-message" th:if="${#fields.hasErrors('numbersRoom')}" th:errors="*{numbersRoom}"></span>
         </div>
         <div class="form-group">
             <label for="typeRoom">Tipo de Habitación:</label>
-            <input type="text" class="form-control" id="typeRoom" name="typeRoom" th:value="*{typeRoom}" required>
+            <input type="text" class="form-control" id="typeRoom" name="typeRoom" th:value="*{typeRoom}">
+            <span class="error-message" th:if="${#fields.hasErrors('typeRoom')}" th:errors="*{typeRoom}"></span>
         </div>
         <div class="form-group">
             <label for="image">Imagen:</label>
-            <input type="text" class="form-control" id="image" name="image" th:value="*{image}" required>
+            <input type="text" class="form-control" id="image" name="image" th:value="*{image}">
+            <span class="error-message" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></span>
         </div>
         <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
