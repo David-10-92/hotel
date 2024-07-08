@@ -4,79 +4,50 @@
     <meta charset="UTF-8">
     <title>Crear Usuario</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            margin-top: 50px;
-        }
-        form div {
-            margin-bottom: 10px;
-        }
-        form label {
-            font-weight: bold;
-        }
-        form input[type="text"],
-        form input[type="email"],
-        form input[type="password"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        form button[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            float: right;
-        }
-        form span.error {
-            color: red;
-        }
-    </style>
 </head>
 <body>
-<div class="container">
-    <h2>Create New User</h2>
-    <form th:action="@{/users/registerUser}" th:object="${userDTO}" method="post">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>Crear Nuevo Usuario</h2>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/users/registerUser}" th:object="${userDTO}" method="post">
 
-        <div>
-            <label>Username:</label>
-            <input type="text" th:field="*{username}" />
-            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></span>
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" class="form-control" id="username" th:field="*{username}" />
+                            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" />
+                            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
+                            <span th:if="${emailError}" th:text="${emailError}" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}" />
+                            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></span>
+                        </div>
+
+                        <input type="hidden" th:field="*{rol}" value="ROLE_CLIENT" />
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div>
-            <label>Email:</label>
-            <input type="email" th:field="*{email}" />
-            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></span>
-            <span th:if="${emailError}" th:text="${emailError}" class="error"></span>
-        </div>
-
-        <div>
-            <label>Password:</label>
-            <input type="password" th:field="*{password}" />
-            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></span>
-        </div>
-
-        <div>
-            <input type="hidden" th:field="*{rol}" value="ROLE_CLIENT" />
-        </div>
-
-        <div>
-            <button type="submit">Registrar</button>
-        </div>
-
-    </form>
+    </div>
 </div>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+

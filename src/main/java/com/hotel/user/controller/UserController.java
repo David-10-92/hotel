@@ -1,8 +1,6 @@
 package com.hotel.user.controller;
 
-
 import com.hotel.erros.EmailAlreadyInUseException;
-import com.hotel.reservation.model.Reservation;
 import com.hotel.room.service.RoomService;
 import com.hotel.user.dtos.UserDTO;
 import com.hotel.user.model.User;
@@ -10,6 +8,7 @@ import com.hotel.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -66,11 +65,6 @@ public class UserController {
         return "home";
     }
 
-    @GetMapping("/admin")
-    public String admin() {
-        return "admin";
-    }
-
     @GetMapping("/editUser")
     public String showEditProfileForm(Model model) {
         UserDTO userDTO = userService.getCurrentUserDTO();
@@ -79,27 +73,33 @@ public class UserController {
     }
 
     @PostMapping("/editUser/{id}")
-    public String updateUser(@PathVariable Long id, @Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult) {
+    public String updateUser(@PathVariable Long id, @Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult bindingResult,Model model) {
         if (bindingResult.hasErrors()) {
+            return "editUser";
+        }
+        try{
+            userService.editUser(id,userDTO);
+        }catch (EmailAlreadyInUseException e){
+            model.addAttribute("emailError",e.getMessage());
             return "editUser";
         }
         userService.editUser(id, userDTO);
         return "redirect:/users/home";
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/deleteUser")
     public String deleteUser() {
         return "deleteUser";
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/deleteUser")
     public String deleteUser(@RequestParam Long id) {
         userService.deleteUser(id);
         return "redirect:/users/home";
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/listUsers")
-    public String searchReservations(Model model,
+    public String searchUsers(Model model,
                                      @RequestParam(name = "page", defaultValue = "0") int page,
                                      @RequestParam(name = "size", defaultValue = "5") int size){
         Page<User> usersPage = userService.getAllUsers(page,size);
