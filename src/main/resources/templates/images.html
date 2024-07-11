@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Imágenes</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Lista de Imágenes</h1>
+    <nav class="mb-4">
+        <a class="btn btn-primary" th:href="@{/home}">Home</a>
+    </nav>
+
+    <!-- Sección para tipo "Tipo Individual" -->
+    <div class="mb-5">
+        <h2 class="mb-3">Tipo Individual</h2>
+        <div class="row">
+            <div class="col-12" th:each="image : ${images}" th:if="${image.typeImage == 'individual'}">
+                <div class="card mb-3">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img th:src="${image.imageUrl}" class="card-img" alt="Imagen de individual">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <a class="btn btn-secondary btn-sm mr-2" th:href="@{'/images/editImage/' + ${image.id}}">Editar</a>
+                                <form th:action="@{'/images/deleteImage/' + ${image.id}}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección para tipo "Tipo Doble" -->
+    <div class="mb-5">
+        <h2 class="mb-3">Tipo Doble</h2>
+        <div class="row">
+            <div class="col-12" th:each="image : ${images}" th:if="${image.typeImage == 'doble'}">
+                <div class="card mb-3">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img th:src="${image.imageUrl}" class="card-img" alt="Imagen de doble">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <a class="btn btn-secondary btn-sm mr-2" th:href="@{'/images/editImage/' + ${image.id}}">Editar</a>
+                                <form th:action="@{'/images/deleteImage/' + ${image.id}}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección para tipo "Tipo Triple" -->
+    <div class="mb-5">
+        <h2 class="mb-3">Tipo Triple</h2>
+        <div class="row">
+            <div class="col-12" th:each="image : ${images}" th:if="${image.typeImage == 'triple'}">
+                <div class="card mb-3">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img th:src="${image.imageUrl}" class="card-img" alt="Imagen de triple">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <a class="btn btn-secondary btn-sm mr-2" th:href="@{'/images/editImage/' + ${image.id}}">Editar</a>
+                                <form th:action="@{'/images/deleteImage/' + ${image.id}}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

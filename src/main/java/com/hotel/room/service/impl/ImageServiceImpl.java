@@ -6,6 +6,7 @@ import com.hotel.room.repository.ImageRepository;
 import com.hotel.room.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,18 +26,22 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image createImage(ImageDTO input) {
+    public Image createImage(ImageDTO imageDTO, MultipartFile mainImage){
         Image image = new Image();
-        image.setImageUrl("/uploads/" + input.getImageUrl() + ".jpg");
-        image.setTypeImage(input.getTypeImage());
+
+        String mainImagePath = "/uploads/" + mainImage.getOriginalFilename();
+        image.setImageUrl(mainImagePath);
+
+        image.setTypeImage(imageDTO.getTypeImage());
         imageRepository.save(image);
         return image;
     }
 
     @Override
-    public Optional<Image> editImage(Long id, ImageDTO input) {
+    public Optional<Image> editImage(Long id, ImageDTO input,MultipartFile file) {
+        String imageUrl = "/uploads/" + file.getOriginalFilename();
         return imageRepository.findById(id).map(image -> {
-            image.setImageUrl(input.getImageUrl());
+            image.setImageUrl(imageUrl);
             image.setTypeImage(input.getTypeImage());
             imageRepository.save(image);
             return image;

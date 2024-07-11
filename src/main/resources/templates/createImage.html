@@ -1,17 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ES">
 <head>
     <meta charset="UTF-8">
     <title>Create Image</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .container {
-            margin-top: 50px;
-        }
-        .error-message {
-            color: red;
-        }
-    </style>
 </head>
 <body>
 
@@ -20,16 +12,20 @@
     <nav class="mb-4">
         <a class="btn btn-primary" th:href="@{/users/home}">Home</a>
     </nav>
-    <form th:action="@{/images/createImage}" th:object="${imageDTO}" method="post">
+    <form th:action="@{/images/createImage}" th:object="${imageDTO}" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="imageUrl">Imagen:</label>
-            <input type="text" class="form-control" id="imageUrl" name="imageUrl" th:field="*{imageUrl}">
-            <div class="error-message" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></div>
+            <input type="file" class="form-control" id="imageUrl" name="imageUrl" required/>
         </div>
         <div class="form-group">
             <label for="typeImage">Type:</label>
-            <input type="text" class="form-control" id="typeImage" name="typeImage" th:field="*{typeImage}">
-            <div class="error-message" th:if="${#fields.hasErrors('typeImage')}" th:errors="*{typeImage}"></div>
+            <select class="form-control" id="typeImage" name="typeImage" th:field="*{typeImage}">
+                <option value="">Selecciona un tipo</option>
+                <option value="individual">Individual</option>
+                <option value="doble">Doble</option>
+                <option value="triple">Triple</option>
+            </select>
+            <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
         </div>
         <br>
         <div>
