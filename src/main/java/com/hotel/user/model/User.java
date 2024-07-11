@@ -18,11 +18,16 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Transient
     private String username;
     @Column(unique = true, nullable = false)
     private String email;
     private String password;
     private String rol;
+
+    public String getUsername() {
+        return email; // Asegúrate de que esto devuelva el correo electrónico
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

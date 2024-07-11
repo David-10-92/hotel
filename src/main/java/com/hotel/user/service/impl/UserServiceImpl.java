@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyInUseException("Este correo electrónico ya está registrado. Por favor, elija otro.");
         }
         User user = new User();
-        user.setUsername(input.getUsername());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setRol(input.getRol());
@@ -48,10 +47,10 @@ public class UserServiceImpl implements UserService {
         // Verificar si el usuario está autenticado
         if (authentication != null && authentication.isAuthenticated()) {
             // Obtener el nombre de usuario del contexto de seguridad
-            String username = authentication.getName();
+            String email = authentication.getName();
 
             // Buscar el usuario en la base de datos por nombre de usuario
-            User user = userRepository.findByUsername(username)
+            User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
             // Mapear el usuario a un DTO y devolverlo
@@ -63,16 +62,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByEmail(username);
     }
 
     private UserDTO mapUserToDTO(User user) {
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId()); // Incluir el id si es necesario
-        userDTO.setUsername(user.getUsername());
+        userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
-        userDTO.setRol(user.getRol()); // Considera cómo mapear el rol si es necesario
-        // Otros campos que desees mapear del usuario a DTO
+        userDTO.setRol(user.getRol());
 
         return userDTO;
     }
@@ -84,7 +81,6 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyInUseException("Este correo electronico ya esta en uso. Por favor eliga otro");
         }
         return userRepository.findById(currentUser.getId()).map(user -> {
-                    user.setUsername(input.getUsername());
                     user.setEmail(input.getEmail());
                 if (input.getPassword() != null && !input.getPassword().isEmpty()) {
                     user.setPassword(passwordEncoder.encode(input.getPassword()));
@@ -95,11 +91,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(Long id) {
-        return userRepository.findById(id).map(user -> {
-            userRepository.delete(user);
-            return true;
-        }).orElse(false);
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        userRepository.delete(user);
     }
 
     @Override

@@ -11,9 +11,6 @@ import lombok.Setter;
 public class UserDTO {
 
     private Long id;
-    @NotBlank(message = "El nombre de usuario es obligatorio.")
-    @Size(min = 3, max = 15, message = "El nombre de usuario debe tener entre {min} y {max} caracteres.")
-    private String username;
     @Email(message = "Debe proporcionar un correo electrónico válido.")
     @NotBlank(message = "El correo electrónico es obligatorio.")
     private String email;
