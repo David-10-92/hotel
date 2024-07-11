@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,15 +27,18 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image createImage(ImageDTO imageDTO, MultipartFile mainImage){
-        Image image = new Image();
-
-        String mainImagePath = "/uploads/" + mainImage.getOriginalFilename();
-        image.setImageUrl(mainImagePath);
-
-        image.setTypeImage(imageDTO.getTypeImage());
-        imageRepository.save(image);
-        return image;
+    public List<Image> createImage(ImageDTO imageDTO, MultipartFile[] files){
+        List<Image> images = new ArrayList<>();
+        for(MultipartFile file :  files){
+            Image image = new Image();
+            System.out.println(file);
+            String fileUrl = "/uploads/" + file.getOriginalFilename();
+            image.setImageUrl(fileUrl);
+            image.setTypeImage(imageDTO.getTypeImage());
+            imageRepository.save(image);
+            images.add(image);
+        }
+        return images;
     }
 
     @Override

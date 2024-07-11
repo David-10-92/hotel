@@ -32,7 +32,7 @@ public class ImageController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/createImage")
     public String createImage(@Valid @ModelAttribute("imageDTO") ImageDTO imageDTO,
-                              @RequestParam("imageUrl") MultipartFile file,
+                              @RequestParam("imageUrl") MultipartFile[] file,
                               Model model){
         if (imageDTO.getTypeImage() == null || imageDTO.getTypeImage().isEmpty()) {
             model.addAttribute("errorMessage", "Debe seleccionar un tipo de imagen");

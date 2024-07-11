@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ImageService {
     List<Image> getImagesAll();
     Optional<Image> getImageId(Long id);
-    Image createImage(ImageDTO input,MultipartFile file);
+    List<Image> createImage(ImageDTO input,MultipartFile[] file);
     Optional<Image> editImage(Long id, ImageDTO input,MultipartFile file);
     boolean deleteImage(Long id);
 
