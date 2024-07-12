@@ -18,7 +18,7 @@
 <div class="container">
     <h1>Create Room</h1>
     <nav class="mb-4">
-        <a class="btn btn-primary" th:href="@{/users/home}">Home</a>
+        <a class="btn btn-primary" th:href="@{/home}">Home</a>
     </nav>
     <form th:action="@{/rooms/createRoom}" th:object="${roomDTO}" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -27,8 +27,13 @@
             <span class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
         </div>
         <div class="form-group">
-            <label for="typeRoom">Type Room:</label>
-            <input type="text" class="form-control" id="typeRoom" th:field="*{typeRoom}" />
+            <label for="typeRoom">Type:</label>
+            <select class="form-control" id="typeRoom" name="typeRoom" th:field="*{typeRoom}">
+                <option value="">Selecciona un tipo</option>
+                <option value="individual">Individual</option>
+                <option value="doble">Doble</option>
+                <option value="triple">Triple</option>
+            </select>
             <span class="error-message" th:if="${#fields.hasErrors('typeRoom')}" th:errors="*{typeRoom}"></span>
         </div>
         <div class="form-group">
@@ -42,9 +47,8 @@
             <span class="error-message" th:if="${#fields.hasErrors('numbersRoom')}" th:errors="*{numbersRoom}"></span>
         </div>
         <div class="form-group">
-            <label for="image">Images:</label>
-            <input type="text" class="form-control" id="image" name="image" accept="image/*" />
-            <span class="error-message" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></span>
+            <label for="image">Main Image:</label>
+            <input type="file" class="form-control" id="image" name="image" required/>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Create Room</button>
@@ -52,6 +56,5 @@
     </form>
 </div>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>

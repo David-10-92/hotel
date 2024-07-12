@@ -7,9 +7,9 @@ import com.hotel.room.model.Room;
 import com.hotel.room.repository.ImageRepository;
 import com.hotel.room.repository.RoomRepository;
 import com.hotel.room.service.RoomService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,33 +31,21 @@ public class RoomServiceImpl implements RoomService {
     ReservationRepository reservationRepository;
 
     @Override
-    public Room createRoom(RoomDTO input) {
+    public Room createRoom(RoomDTO input,MultipartFile mainImage) {
         Room room = new Room();
+        String mainImagePath = "/uploads/" + mainImage.getOriginalFilename();
+        room.setImage(mainImagePath);
         room.setName(input.getName());
         room.setNightPrice(input.getNightPrice());
         room.setNumbersRoom(input.getNumbersRoom());
-
-        imageRepository.findByImageUrl("/uploads/" + input.getImage() + ".jpg").ifPresentOrElse(image -> {
-            room.setImage(image.getImageUrl());
-        }, () -> {
-            throw new EntityNotFoundException("Imagen no encontrada");
-        });
-
         room.setTypeRoom(input.getTypeRoom());
-
-        List<String> imageUrls = imageRepository.findByTypeImage(room.getTypeRoom())
-                .stream()
-                .map(Image::getImageUrl)
-                .toList();
-        room.setImages(imageUrls);
-
         return roomRepository.save(room);
     }
 
     @Override
-    public Optional<Room> editRoom(Long id, RoomDTO input) {
+    public Optional<Room> editRoom(Long id, RoomDTO input,MultipartFile file) {
         return roomRepository.findById(id).map(room -> {
-            updateRoomFields(room, input);
+            updateRoomFields(room, input,file);
             return roomRepository.save(room);
         });
     }
@@ -88,12 +76,13 @@ public class RoomServiceImpl implements RoomService {
                 .collect(Collectors.toList());
     }
 
-    private void updateRoomFields(Room room, RoomDTO input) {
+    private void updateRoomFields(Room room, RoomDTO input,MultipartFile file) {
         room.setName(input.getName());
         room.setNightPrice(input.getNightPrice());
         room.setNumbersRoom(input.getNumbersRoom());
         room.setTypeRoom(input.getTypeRoom());
-        room.setImage(input.getImage());
+        String fileUrl = "/uploads/" + file.getOriginalFilename();
+        room.setImage(fileUrl);
     }
 
     private boolean isRoomAvailable(Room room, LocalDate checkInDate, LocalDate checkOutDate) {

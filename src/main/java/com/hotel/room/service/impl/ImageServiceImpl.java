@@ -31,7 +31,6 @@ public class ImageServiceImpl implements ImageService {
         List<Image> images = new ArrayList<>();
         for(MultipartFile file :  files){
             Image image = new Image();
-            System.out.println(file);
             String fileUrl = "/uploads/" + file.getOriginalFilename();
             image.setImageUrl(fileUrl);
             image.setTypeImage(imageDTO.getTypeImage());

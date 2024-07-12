@@ -2,7 +2,6 @@ package com.hotel.room.controller;
 
 import com.hotel.reservation.service.ReservationService;
 import com.hotel.room.dtos.DateRangeDTO;
-import com.hotel.room.dtos.RoomAvailabilityDTO;
 import com.hotel.room.dtos.RoomDTO;
 import com.hotel.room.model.Room;
 import com.hotel.room.service.RoomService;
@@ -13,14 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/rooms")
@@ -38,12 +36,13 @@ public class RoomController {
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/createRoom")
-    public String createRoom(@Valid @ModelAttribute("roomDTO")RoomDTO roomDTO,BindingResult bindingResult){
-        if (bindingResult.hasErrors()) {
+    public String createRoom(@Valid @ModelAttribute("roomDTO")RoomDTO roomDTO,BindingResult bindingResult,
+                             @RequestParam("image") MultipartFile mainImage){
+        if(bindingResult.hasErrors()){
             return "createRoom";
         }
-        roomService.createRoom(roomDTO);
-        return "redirect:/users/listRooms";
+        roomService.createRoom(roomDTO,mainImage);
+        return "redirect:/home";
     }
 
     @GetMapping("/{id}")
@@ -61,7 +60,7 @@ public class RoomController {
         return "roomDetails";
     }
 
-    @GetMapping("/listRooms")
+    @GetMapping()
     public String searchRooms(@ModelAttribute DateRangeDTO dateRange,
                               Model model) {
 
@@ -86,7 +85,9 @@ public class RoomController {
         model.addAttribute("rooms", availableRooms);
         model.addAttribute("availableRoomCounts", availableRoomCounts);
         model.addAttribute("dateRange", dateRange);
-        return "listRooms";
+        model.addAttribute("today", LocalDate.now());
+        model.addAttribute("tomorrow", LocalDate.now().plusDays(1));
+        return "rooms";
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/editRoom/{id}")
@@ -96,24 +97,25 @@ public class RoomController {
             model.addAttribute("room", room.get());
             return "editRoom";
         } else {
-            return "redirect:/rooms/listRooms";
+            return "redirect:/home";
         }
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/editRoom/{id}")
     public String updateRoom(@PathVariable Long id,@Valid @ModelAttribute("room") RoomDTO roomDTO,
+                             @RequestParam("image") MultipartFile file,
                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "editRoom";
         }
-        roomService.editRoom(id, roomDTO);
-        return "redirect:/rooms/listRooms";
+        roomService.editRoom(id, roomDTO,file);
+        return "redirect:/home";
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/deleteRoom/{id}")
     public String deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
-        return "redirect:/rooms/listRooms";
+        return "redirect:/home";
     }
 
 }
