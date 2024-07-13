@@ -18,4 +18,5 @@ public interface RoomService {
     List<Room> findAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate);
     int countAvailableRooms(Room room, LocalDate checkInDate, LocalDate checkOutDate);
     List<String> getImagesByType(Long roomId, String type);
+    void checkRoomAvailability(Room room, LocalDate checkInDate, LocalDate checkOutDate, int requestedRooms);
 }

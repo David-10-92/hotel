@@ -1,5 +1,7 @@
 package com.hotel.room.service.impl;
 
+import com.hotel.room.errors.RoomNotFoundException;
+import com.hotel.room.errors.RoomServiceException;
 import com.hotel.reservation.repository.ReservationRepository;
 import com.hotel.room.dtos.RoomDTO;
 import com.hotel.room.model.Image;
@@ -8,6 +10,7 @@ import com.hotel.room.repository.ImageRepository;
 import com.hotel.room.repository.RoomRepository;
 import com.hotel.room.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,30 +35,49 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room createRoom(RoomDTO input,MultipartFile mainImage) {
-        Room room = new Room();
-        String mainImagePath = "/uploads/" + mainImage.getOriginalFilename();
-        room.setImage(mainImagePath);
-        room.setName(input.getName());
-        room.setNightPrice(input.getNightPrice());
-        room.setNumbersRoom(input.getNumbersRoom());
-        room.setTypeRoom(input.getTypeRoom());
-        return roomRepository.save(room);
+        if (mainImage == null || mainImage.isEmpty()) {
+            throw new IllegalArgumentException("La imagen principal no fue proporcionada.");
+        }
+        try {
+            Room room = new Room();
+            String mainImagePath = "/uploads/" + mainImage.getOriginalFilename();
+            room.setImage(mainImagePath);
+            room.setName(input.getName());
+            room.setNightPrice(input.getNightPrice());
+            room.setNumbersRoom(input.getNumbersRoom());
+            room.setTypeRoom(input.getTypeRoom());
+            return roomRepository.save(room);
+        } catch (DataAccessException e) {
+            throw new RoomServiceException("Error al crear la habitación: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<Room> editRoom(Long id, RoomDTO input,MultipartFile file) {
-        return roomRepository.findById(id).map(room -> {
-            updateRoomFields(room, input,file);
+        Optional<Room> optionalRoom = roomRepository.findById(id);
+        if (!optionalRoom.isPresent()) {
+            throw new RoomNotFoundException("No se encontró la habitación con ID: " + id);
+        }
+
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("La imagen para editar la habitación no fue proporcionada.");
+        }
+
+        return optionalRoom.map(room -> {
+            updateRoomFields(room, input, file);
             return roomRepository.save(room);
         });
     }
 
     @Override
     public boolean deleteRoom(Long id) {
-        return roomRepository.findById(id).map(room -> {
-                    roomRepository.delete(room);
-                    return true;
-                }).orElse(false);
+        Optional<Room> optionalRoom = roomRepository.findById(id);
+        if (optionalRoom.isPresent()) {
+            roomRepository.delete(optionalRoom.get());
+            return true;
+        } else {
+            throw new RoomNotFoundException("No se encontró la habitación con ID: " + id);
+        }
     }
 
     @Override
@@ -65,7 +87,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Optional<Room> getRoomById(Long id) {
-        return roomRepository.findById(id);
+        return Optional.ofNullable(roomRepository.findById(id)
+                .orElseThrow(() -> new RoomNotFoundException("No se encontró la habitación con ID: " + id)));
     }
 
     @Override
@@ -94,6 +117,14 @@ public class RoomServiceImpl implements RoomService {
     public int countAvailableRooms(Room room, LocalDate checkInDate, LocalDate checkOutDate) {
         int reservedCount = reservationRepository.countReservationsByRoomAndDateRange(room, checkInDate, checkOutDate);
         return room.getNumbersRoom() - reservedCount;
+    }
+
+    @Override
+    public void checkRoomAvailability(Room room, LocalDate checkInDate, LocalDate checkOutDate, int requestedRooms) {
+        int availableRooms = countAvailableRooms(room, checkInDate, checkOutDate);
+        if (requestedRooms > availableRooms) {
+            throw new IllegalArgumentException("No quedan suficientes habitaciones disponibles para las fechas seleccionadas.");
+        }
     }
 
     @Override

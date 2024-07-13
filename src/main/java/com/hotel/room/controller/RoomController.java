@@ -1,5 +1,7 @@
 package com.hotel.room.controller;
 
+import com.hotel.room.errors.RoomNotFoundException;
+import com.hotel.room.errors.RoomServiceException;
 import com.hotel.reservation.service.ReservationService;
 import com.hotel.room.dtos.DateRangeDTO;
 import com.hotel.room.dtos.RoomDTO;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -37,31 +40,40 @@ public class RoomController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/createRoom")
     public String createRoom(@Valid @ModelAttribute("roomDTO")RoomDTO roomDTO,BindingResult bindingResult,
-                             @RequestParam("image") MultipartFile mainImage){
-        if(bindingResult.hasErrors()){
+                             @RequestParam("image") MultipartFile mainImage,RedirectAttributes redirectAttributes,Model model){
+        if (bindingResult.hasErrors()) {
             return "createRoom";
         }
-        roomService.createRoom(roomDTO,mainImage);
-        return "redirect:/home";
+        try {
+            roomService.createRoom(roomDTO, mainImage);
+            redirectAttributes.addFlashAttribute("successMessage", "La habitación se creó exitosamente");
+            return "redirect:/home";
+        } catch (IllegalArgumentException | RoomServiceException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "createRoom";
+        }
     }
 
     @GetMapping("/{id}")
-    public String getRoomDetails(@PathVariable Long id,Model model) {
-        Optional<Room> roomOptional = roomService.getRoomById(id);
-        if (roomOptional.isPresent()) {
-            Room room = roomOptional.get();
-            model.addAttribute("room", room);
+    public String getRoomDetails(@PathVariable Long id,Model model,RedirectAttributes redirectAttributes) {
+        try {
+            Optional<Room> room = roomService.getRoomById(id);
 
-            List<String> landscapeImages = roomService.getImagesByType(room.getId(), room.getTypeRoom());
+            model.addAttribute("room", room.get());
+
+            List<String> landscapeImages = roomService.getImagesByType(room.get().getId(), room.get().getTypeRoom());
             model.addAttribute("landscapeImages", landscapeImages);
 
             return "roomDetails";
+
+        } catch (RoomNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/home";
         }
-        return "roomDetails";
     }
 
     @GetMapping()
-    public String searchRooms(@ModelAttribute DateRangeDTO dateRange,
+    public String searchRooms(@ModelAttribute DateRangeDTO dateRange, RedirectAttributes redirectAttributes,
                               Model model) {
 
         if (dateRange.getCheckInDate() == null) {
@@ -74,7 +86,16 @@ public class RoomController {
         LocalDate checkInDate = dateRange.getCheckInDate();
         LocalDate checkOutDate = dateRange.getCheckOutDate();
 
+        if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
+            redirectAttributes.addFlashAttribute("message", "La fecha de check-out debe ser posterior a la fecha de check-in.");
+            return "redirect:/rooms";
+        }
+
         List<Room> availableRooms = roomService.findAvailableRooms(checkInDate, checkOutDate);
+
+        if (availableRooms.isEmpty()) {
+            model.addAttribute("messageRooms", "No hay habitaciones disponibles para estas fechas");
+        }
 
         Map<Long, Integer> availableRoomCounts = new HashMap<>();
         for (Room room : availableRooms) {
@@ -91,31 +112,49 @@ public class RoomController {
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/editRoom/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<Room> room = roomService.getRoomById(id);
-        if (room.isPresent()) {
-            model.addAttribute("room", room.get());
+    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Room room = roomService.getRoomById(id).orElseThrow(() -> new RoomNotFoundException("No se encontró la habitación con ID: " + id));
+            model.addAttribute("room", room);
             return "editRoom";
-        } else {
+        } catch (RoomNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/home";
         }
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/editRoom/{id}")
-    public String updateRoom(@PathVariable Long id,@Valid @ModelAttribute("room") RoomDTO roomDTO,
+    public String updateRoom(@PathVariable Long id,
+                             @Valid @ModelAttribute("room") RoomDTO roomDTO,
+                             BindingResult bindingResult,
                              @RequestParam("image") MultipartFile file,
-                             BindingResult bindingResult) {
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
+
         if (bindingResult.hasErrors()) {
+            model.addAttribute("room", roomDTO);
             return "editRoom";
         }
-        roomService.editRoom(id, roomDTO,file);
-        return "redirect:/home";
+        try {
+            roomService.editRoom(id, roomDTO, file);
+            redirectAttributes.addFlashAttribute("successMessage", "La habitación se editó correctamente.");
+            return "redirect:/home";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("room", roomDTO);
+            return "editRoom";
+        }
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/deleteRoom/{id}")
-    public String deleteRoom(@PathVariable Long id) {
-        roomService.deleteRoom(id);
+    public String deleteRoom(@PathVariable Long id,RedirectAttributes redirectAttributes) {
+        try {
+            roomService.deleteRoom(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Habitación eliminada exitosamente.");
+        } catch (RoomNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/home";
     }
-
 }
