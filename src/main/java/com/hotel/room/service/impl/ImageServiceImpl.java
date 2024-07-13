@@ -1,5 +1,7 @@
 package com.hotel.room.service.impl;
 
+import com.hotel.room.errors.ImageNotFoundException;
+import com.hotel.room.errors.ImageUploadException;
 import com.hotel.room.dtos.ImageDTO;
 import com.hotel.room.model.Image;
 import com.hotel.room.repository.ImageRepository;
@@ -23,13 +25,22 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Optional<Image> getImageId(Long id) {
-        return imageRepository.findById(id);
+        return Optional.ofNullable(imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Imagen no encontrada")));
     }
 
     @Override
     public List<Image> createImage(ImageDTO imageDTO, MultipartFile[] files){
+        if (files == null || files.length == 0) {
+            throw new ImageUploadException("No se ha proporcionado ningún archivo para subir");
+        }
+
         List<Image> images = new ArrayList<>();
-        for(MultipartFile file :  files){
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) {
+                throw new ImageUploadException("El archivo de imagenes está vacío: ");
+            }
+
             Image image = new Image();
             String fileUrl = "/uploads/" + file.getOriginalFilename();
             image.setImageUrl(fileUrl);
@@ -42,13 +53,17 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Optional<Image> editImage(Long id, ImageDTO input,MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new ImageUploadException("No se ha proporcionado ningún archivo para subir");
+        }
+
         String imageUrl = "/uploads/" + file.getOriginalFilename();
-        return imageRepository.findById(id).map(image -> {
+        return Optional.ofNullable(imageRepository.findById(id).map(image -> {
             image.setImageUrl(imageUrl);
             image.setTypeImage(input.getTypeImage());
             imageRepository.save(image);
             return image;
-        });
+        }).orElseThrow(() -> new ImageNotFoundException("Imagen no encontrada")));
     }
 
     @Override
@@ -56,6 +71,6 @@ public class ImageServiceImpl implements ImageService {
         return imageRepository.findById(id).map(image -> {
             imageRepository.delete(image);
             return true;
-        }).orElse(false);
+        }).orElseThrow(() -> new ImageNotFoundException("Imagen no encontrada"));
     }
 }
