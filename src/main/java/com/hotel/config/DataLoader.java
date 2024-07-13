@@ -19,11 +19,10 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if(!userService.isEmailAlreadyInUse("d_cazalla_b@hotmail.com")){
-            // Crear usuario administrador
+
             UserDTO adminDTO = new UserDTO();
-            adminDTO.setUsername("david");
             adminDTO.setEmail("d_cazalla_b@hotmail.com");
-            adminDTO.setPassword("123456"); // Encriptar la contraseña
+            adminDTO.setPassword("123456");
             adminDTO.setRol("ROLE_ADMIN");
 
             userService.createUser(adminDTO);
