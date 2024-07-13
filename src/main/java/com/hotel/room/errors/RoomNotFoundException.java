@@ -1,4 +1,4 @@
-package com.hotel.erros;
+package com.hotel.room.errors;
 
 public class RoomNotFoundException extends RuntimeException{
     public RoomNotFoundException(String message) {

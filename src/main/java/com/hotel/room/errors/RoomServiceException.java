@@ -1,4 +1,4 @@
-package com.hotel.erros;
+package com.hotel.room.errors;
 
 public class RoomServiceException extends RuntimeException{
     public RoomServiceException(String message) {

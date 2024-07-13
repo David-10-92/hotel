@@ -1,4 +1,4 @@
-package com.hotel.erros;
+package com.hotel.room.errors;
 
 public class ImageUploadException extends RuntimeException{
     public ImageUploadException(String message) {
