@@ -1,7 +1,8 @@
 package com.hotel.user.service.impl;
 
-import com.hotel.erros.EmailAlreadyInUseException;
 import com.hotel.user.dtos.UserDTO;
+import com.hotel.user.errors.EmailAlreadyInUseException;
+import com.hotel.user.errors.UnauthorizedException;
 import com.hotel.user.model.User;
 import com.hotel.user.repository.UserRepository;
 import com.hotel.user.service.UserService;
@@ -41,28 +42,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getCurrentUserDTO() {
-        // Obtener la autenticación del contexto de seguridad
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Verificar si el usuario está autenticado
         if (authentication != null && authentication.isAuthenticated()) {
-            // Obtener el nombre de usuario del contexto de seguridad
             String email = authentication.getName();
-
-            // Buscar el usuario en la base de datos por nombre de usuario
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-
-            // Mapear el usuario a un DTO y devolverlo
             return mapUserToDTO(user);
         } else {
-            throw new EntityNotFoundException("Usuario no autenticado");
+            throw new UnauthorizedException("Usuario no autenticado");
         }
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByEmail(username);
+    public Optional<User> findByEmail(String username) {
+        return Optional.ofNullable(userRepository.findByEmail(username)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el correo.")));
     }
 
     private UserDTO mapUserToDTO(User user) {
@@ -77,17 +71,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> editUser(Long id, UserDTO input) {
         UserDTO currentUser = getCurrentUserDTO();
-        if(isEmailAlreadyInUse(input.getEmail()) && !currentUser.getEmail().equals(input.getEmail())){
-            throw new EmailAlreadyInUseException("Este correo electronico ya esta en uso. Por favor eliga otro");
+        if (isEmailAlreadyInUse(input.getEmail()) && !currentUser.getEmail().equals(input.getEmail())) {
+            throw new EmailAlreadyInUseException("Este correo electrónico ya está en uso. Por favor, elija otro.");
         }
         return userRepository.findById(currentUser.getId()).map(user -> {
-                    user.setEmail(input.getEmail());
-                if (input.getPassword() != null && !input.getPassword().isEmpty()) {
-                    user.setPassword(passwordEncoder.encode(input.getPassword()));
-                }
-                    user.setRol(input.getRol());
-                    return userRepository.save(user);
-                });
+            user.setEmail(input.getEmail());
+            if (input.getPassword() != null && !input.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(input.getPassword()));
+            }
+            user.setRol(input.getRol());
+            return userRepository.save(user);
+        });
     }
 
     @Override
@@ -113,5 +107,4 @@ public class UserServiceImpl implements UserService {
         List<User> reservationList = userRepository.findAll();
         return new PageImpl<>(reservationList, pageable, reservationPage.getTotalElements());
     }
-
 }

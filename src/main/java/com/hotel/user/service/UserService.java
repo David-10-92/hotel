@@ -13,6 +13,6 @@ public interface UserService {
     boolean isEmailAlreadyInUse(String email);
     Optional<User> findUserById(Long id);
     UserDTO getCurrentUserDTO();
-    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String username);
     Page<User> getAllUsers(int page, int size);
 }
