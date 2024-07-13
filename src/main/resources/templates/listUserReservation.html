@@ -5,37 +5,12 @@
     <title>User Reservations</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .pagination {
-            display: flex;
-            list-style-type: none;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .pagination li {
-            margin: 0 5px;
-        }
-        .pagination li.active a {
-            font-weight: bold;
-            text-decoration: underline;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid black;
-            padding: 10px;
-            text-align: left;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
     <h1>Your Reservations</h1>
     <nav class="mb-4">
-        <a class="btn btn-primary" th:href="@{/users/home}">Home</a>
+        <a class="btn btn-primary" th:href="@{/home}">Home</a>
     </nav>
     <table class="table table-bordered">
         <thead class="thead-dark">

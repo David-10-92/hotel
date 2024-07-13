@@ -11,20 +11,23 @@
     <nav class="mb-4">
         <a class="btn btn-primary" th:href="@{/home}">Home</a>
     </nav>
+    <div class="container mt-4">
+        <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
+    </div>
     <form th:action="@{'/rooms/editRoom/' + ${room.id}}" th:object="${room}" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="name">Nombre:</label>
-            <input type="text" class="form-control" id="name" name="name" th:value="*{name}" >
+            <input type="text" class="form-control" id="name" name="name" th:field="*{name}" >
             <span class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
         </div>
         <div class="form-group">
             <label for="nightPrice">Precio por Noche:</label>
-            <input type="text" class="form-control" id="nightPrice" name="nightPrice" th:value="*{nightPrice}">
+            <input type="text" class="form-control" id="nightPrice" name="nightPrice" th:field="*{nightPrice}">
             <span class="error-message" th:if="${#fields.hasErrors('nightPrice')}" th:errors="*{nightPrice}"></span>
         </div>
         <div class="form-group">
             <label for="numbersRoom">Número de Habitación:</label>
-            <input type="text" class="form-control" id="numbersRoom" name="numbersRoom" th:value="*{numbersRoom}">
+            <input type="text" class="form-control" id="numbersRoom" name="numbersRoom" th:field="*{numbersRoom}">
             <span class="error-message" th:if="${#fields.hasErrors('numbersRoom')}" th:errors="*{numbersRoom}"></span>
         </div>
         <div class="form-group">
@@ -42,6 +45,7 @@
             <input type="file" class="form-control" id="image" name="image" required/>
         </div>
         <button type="submit" class="btn btn-primary">Guardar</button>
+        <a class="btn btn-primary" th:href="@{/rooms}">Cancelar</a>
     </form>
 </div>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

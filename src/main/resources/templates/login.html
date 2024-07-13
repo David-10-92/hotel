@@ -14,6 +14,7 @@
                     <h2>Login</h2>
                 </div>
                 <div class="card-body">
+                    <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info"></span>
                     <div th:if="${param.error}" class="alert alert-danger">
                         <p>Email o contraseña incorrectos. Por favor, inténtelo de nuevo.</p>
                     </div>
@@ -37,7 +38,7 @@
                     </form>
 
                     <a th:href="@{/users/registerUser}" class="btn btn-link">Registrarse</a>
-                    <a th:href="@{/users/home}" class="btn btn-link">Home</a>
+                    <a th:href="@{/home}" class="btn btn-link">Home</a>
                 </div>
             </div>
         </div>

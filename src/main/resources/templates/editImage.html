@@ -9,12 +9,12 @@
 <div class="container">
     <h1>Editar Imagen</h1>
     <a th:href="@{/images}" class="btn btn-secondary">Volver</a>
-
+    <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
     <form th:action="@{'/images/editImage/' + ${image.id}}" th:object="${image}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:value="${image.id}" name="id"/>
+        <input type="hidden" th:value="${image.id}" name="image"/>
         <div class="form-group">
             <label for="imageUrl">Imagen:</label>
-            <input type="file" class="form-control" id="imageUrl" name="imageUrl" required/>
+            <input type="file" class="form-control" id="imageUrl" name="imageUrl"/>
         </div>
         <div class="form-group">
             <label for="typeImage">Type:</label>
@@ -24,7 +24,6 @@
                 <option value="doble">Doble</option>
                 <option value="triple">Triple</option>
             </select>
-            <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
         </div>
         <button type="submit" class="btn btn-primary">Guardar</button>
     </form>

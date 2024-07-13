@@ -7,8 +7,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .room-image {
-            width: 100px; /* Cambia el tamaño según tus necesidades */
-            height: auto; /* Mantiene la proporción de la imagen */
+            max-width: 200px; /* Tamaño máximo para las imágenes */
+            height: auto;
         }
     </style>
 </head>
@@ -18,8 +18,7 @@
     <nav class="mb-4">
         <a class="btn btn-primary" th:href="@{/home}">Home</a>
     </nav>
-    <!-- Formulario de búsqueda de habitaciones -->
-    <form th:action="@{/rooms/listRooms}" method="get" th:object="${dateRange}" class="form-inline mb-4">
+    <form th:action="@{/rooms}" method="get" th:object="${dateRange}" class="form-inline mb-4">
         <div class="form-group mr-2">
             <label for="checkInDate" class="mr-2">Check-in Date:</label>
             <input type="date" id="checkInDate" th:field="*{checkInDate}" class="form-control" th:attr="min=${today}">
@@ -30,10 +29,11 @@
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
+    <div class="container">
+        <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info"></span>
+        <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
+    </div>
 
-    <div th:if="${message}" th:text="${message}" class="alert alert-info"></div>
-
-    <!-- Listado de Habitaciones -->
     <div class="row">
         <ul class="list-group w-100" th:each="room : ${rooms}">
             <li class="list-group-item">
@@ -44,10 +44,6 @@
                         <p th:text="${room.nightPrice}">Night Price</p>
                         <p>Habitaciones disponibles: <span th:text="${availableRoomCounts.get(room.id)}"></span></p>
                         <a th:href="@{'/rooms/' + ${room.id} + '?checkInDate=' + ${dateRange.checkInDate} + '&checkOutDate=' + ${dateRange.checkOutDate}}" target="_blank" class="btn btn-info btn-sm">Ver Detalles</a>
-
-                        <span th:if="${mensajeError}" th:text="${mensajeError + ' ' + availableRoomCounts.get(room.id) + ' habitaciones'}" class="text-danger"></span>
-                        <span th:if="${mensajeError2}" th:text="${mensajeError2}" class="text-danger"></span>
-
                         <div class="room-actions mt-2">
                             <form th:action="@{/reservations/createReservation}" method="get" class="d-inline">
                                 <input type="number" name="numbersRoom" th:value="${room.numbersRoom}" class="form-control d-inline-block w-auto"/>
@@ -55,7 +51,6 @@
                                 <input type="hidden" name="roomId" th:value="${room.id}"/>
                                 <input type="hidden" name="checkInDate" th:value="${dateRange.checkInDate}" />
                                 <input type="hidden" name="checkOutDate" th:value="${dateRange.checkOutDate}" />
-                                <input type="hidden" name="userId" th:value="${userId}"/>
                                 <button type="submit" class="btn btn-success btn-sm">Reservar</button>
                             </form>
                             <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/rooms/editRoom/' + ${room.id}}" class="btn btn-warning btn-sm">Editar</a>
@@ -67,8 +62,10 @@
                 </div>
             </li>
         </ul>
+        <span th:if="${#lists.isEmpty(rooms)}" class="alert alert-warning">No hay habitaciones disponibles para las fechas seleccionadas.</span>
     </div>
 </div>
+
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

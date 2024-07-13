@@ -4,27 +4,12 @@
     <meta charset="UTF-8">
     <title>List of Reservations</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .pagination {
-            display: flex;
-            list-style-type: none;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .pagination li {
-            margin: 0 5px;
-        }
-        .pagination li.active a {
-            font-weight: bold;
-            text-decoration: underline;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
     <h1>Reservations</h1>
     <nav class="mb-4">
-        <a class="btn btn-primary" th:href="@{/users/home}">Home</a>
+        <a class="btn btn-primary" th:href="@{/home}">Home</a>
     </nav>
     <table class="table table-striped">
         <thead>

@@ -4,96 +4,86 @@
     <meta charset="UTF-8">
     <title>Home</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-        }
-
-        .full-screen-img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -1;
-        }
-
-        .container-fluid {
-            padding: 0;
-        }
-
-        .list-group-item {
-            padding: 0;
-        }
-
-        .navbar {
-            margin-bottom: 0;
-        }
-    </style>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Hotel Continental</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
-                <a class="nav-link" th:href="@{/users/login}">Login</a>
-            </li>
             <li class="nav-item" sec:authorize="isAuthenticated()">
-                <span class="nav-link">Welcome, <span th:text="${username}"></span>!</span>
+                <span class="nav-link">Bienvenido <span></span>!</span>
+            </li>
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{/users/login}">Login</a>
             </li>
             <li class="nav-item" sec:authorize="isAuthenticated()">
                 <form class="form-inline" th:action="@{/logout}" method="post">
                     <button class="btn btn-outline-danger" type="submit">Cerrar sesión</button>
                 </form>
             </li>
+
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <a class="nav-link dropdown-toggle" href="#" id="adminMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Administrar
+                </a>
+                <div class="dropdown-menu" aria-labelledby="adminMenu">
+                    <a class="dropdown-item" th:href="@{/users/editUser}">Editar Perfil</a>
+                    <a class="dropdown-item" th:href="@{/reservations/listUserReservation}">Mis reservas</a>
+                    <a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/rooms/createRoom}">Crear habitación</a>
+                    <a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/images/createImage}">Crear imagen</a>
+                    <a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/images}">Lista imágenes</a>
+                    <a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/users}">Lista usuarios</a>
+                    <a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/reservations}">Lista reservas</a>
+                    <a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/users/deleteUser}">Eliminar Usuario</a>
+                </div>
+            </li>
         </ul>
     </div>
 </nav>
 
-<div class="container-fluid p-0 position-relative">
-    <img src="/uploads/portada.jpg" class="img-fluid full-screen-img" alt="Imagen del Hotel">
-    <div class="row">
-        <div class="col">
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
-                    <a class="btn btn-primary btn-block" th:href="@{/rooms/createRoom}">Crear habitación</a>
-                </li>
-                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
-                    <a class="btn btn-primary btn-block" th:href="@{/images/createImage}">Crear imagen</a>
-                </li>
-                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
-                    <a class="btn btn-primary btn-block" th:href="@{/images/listImages}">Lista imágenes</a>
-                </li>
-                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
-                    <a class="btn btn-primary btn-block" th:href="@{/users/listUsers}">Lista usuarios</a>
-                </li>
-                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
-                    <a class="btn btn-primary btn-block" th:href="@{/reservations/listReservations}">Lista reservas</a>
-                </li>
-                <li class="list-group-item flex-fill" sec:authorize="isAuthenticated()">
-                    <a class="btn btn-primary btn-block" th:href="@{/users/editUser}">Editar Perfil</a>
-                </li>
-                <li class="list-group-item flex-fill" sec:authorize="hasRole('ROLE_ADMIN')">
-                    <a class="btn btn-danger btn-block" th:href="@{/users/deleteUser}">Eliminar Usuario</a>
-                </li>
-                <li class="list-group-item flex-fill">
-                    <a class="btn btn-secondary btn-block" th:href="@{/rooms/listRooms}">Habitaciones</a>
-                </li>
-                <li class="list-group-item flex-fill">
-                    <a class="btn btn-secondary btn-block" th:href="@{/reservations/listUserReservation}">Mis reservas</a>
-                </li>
-            </ul>
+<div class="container text-center my-2">
+    <form th:action="@{/rooms}" method="get" th:object="${dateRange}" class="form-inline justify-content-center">
+        <h5 class="mb-2">Buscador de habitaciones:</h5>
+        <div class="form-group mr-2">
+            <label for="checkInDate" class="mr-2">Check-in Date:</label>
+            <input type="date" id="checkInDate" th:field="*{checkInDate}" class="form-control" th:attr="min=${today}">
         </div>
+        <div class="form-group mr-2">
+            <label for="checkOutDate" class="mr-2">Check-out Date:</label>
+            <input type="date" id="checkOutDate" th:field="*{checkOutDate}" class="form-control" th:attr="min=${tomorrow}">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+</div>
+<div class="container mt-4">
+    <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info"></span>
+    <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
+</div>
+<div class="container">
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li th:each="image, iterStat : ${imageNames}" th:data-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0 ? ' active' : ''}"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div th:each="image, iterStat : ${imageNames}" class="carousel-item" th:classappend="${iterStat.index == 0 ? ' active' : ''}">
+                <img th:src="${image}" class="d-block w-100" style="max-height: 400px; object-fit: cover;" alt="Imagen del Hotel">
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>
+
 
