@@ -1,5 +1,6 @@
 package com.hotel.reservation.service.impl;
 
+import com.hotel.user.errors.UserNotAuthenticatedException;
 import com.hotel.reservation.dtos.ReservationDTO;
 import com.hotel.reservation.dtos.ReservationParamsDTO;
 import com.hotel.reservation.model.Reservation;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -54,6 +57,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservationDTO.setUserId(currentUser.getId());
         reservationDTO.setCheckInDate(paramsDTO.getCheckInDate());
         reservationDTO.setCheckOutDate(paramsDTO.getCheckOutDate());
+        reservationDTO.setNightPrice(paramsDTO.getNightPrice());
         reservationDTO.setTotalPrice(totalPrice);
         reservationDTO.setNumberOfRooms(paramsDTO.getNumbersRoom());
         return reservationDTO;
@@ -103,10 +107,10 @@ public class ReservationServiceImpl implements ReservationService {
             if (reservation.getCheckInDate().isAfter(LocalDate.now())) {
                 reservationRepository.delete(reservation);
             } else {
-                throw new IllegalArgumentException("Cannot delete reservation with a start date that is today or in the past.");
+                throw new IllegalArgumentException("No se puede eliminar una reserva con una fecha de inicio que sea hoy o en el pasado.");
             }
         } else {
-            throw new IllegalArgumentException("Reservation not found");
+            throw new IllegalArgumentException("Reserva no encontrada");
         }
     }
 
@@ -136,14 +140,25 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Page<Reservation> getReservationsByUser(String username, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Optional<User> userOptional = userRepository.findByUsername(username);
+        Optional<User> userOptional = userRepository.findByEmail(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             return reservationRepository.findByUser(user, pageable);
         } else {
-            // Retorna una página vacía, pero no Page.empty(pageable), ya que no es lo mismo
             return Page.empty();
         }
+    }
+
+    public User getCurrentUser() throws UserNotAuthenticatedException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        return userRepository.findByEmail(currentUsername)
+                .orElseThrow(() ->  new UserNotAuthenticatedException("Usuario no autenticado"));
+    }
+
+    public Room validateRoom(Long roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("La habitación seleccionada no existe."));
     }
 
 }

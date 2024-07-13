@@ -1,5 +1,6 @@
 package com.hotel.reservation.controller;
 
+import com.hotel.user.errors.UserNotAuthenticatedException;
 import com.hotel.reservation.dtos.ReservationDTO;
 import com.hotel.reservation.dtos.ReservationParamsDTO;
 import com.hotel.reservation.model.Reservation;
@@ -11,8 +12,6 @@ import com.hotel.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/reservations")
@@ -39,57 +35,38 @@ public class ReservationController {
     public String formCreateReservation(@ModelAttribute("reservationParamsDTO") ReservationParamsDTO paramsDTO,
                                         Model model,
                                         RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName();
-        Optional<User> currentUser = userService.findByUsername(currentUsername);
+        try{
+            User currentUser = reservationService.getCurrentUser();
+            model.addAttribute("idUser", currentUser.getId());
 
-        if (currentUser.isEmpty()) {
-            // Manejar caso donde el usuario no está autenticado correctamente
-            return "redirect:/users/login"; // Redirige al login si el usuario no está autenticado
-        }
+            Room room = reservationService.validateRoom(paramsDTO.getRoomId());
 
-        LocalDate today = LocalDate.now();
-        if (paramsDTO.getCheckInDate() == null || paramsDTO.getCheckOutDate() == null ||
-                paramsDTO.getCheckInDate().isBefore(today) || paramsDTO.getCheckOutDate().isBefore(today)) {
-            redirectAttributes.addFlashAttribute("mensajeError2", "Las fechas no son válidas. Debe seleccionar fechas a partir de hoy.");
-            return "redirect:/rooms/listRooms";
-        }
+            roomService.checkRoomAvailability(room, paramsDTO.getCheckInDate(), paramsDTO.getCheckOutDate(), paramsDTO.getNumbersRoom());
 
-        Optional<Room> optionalRoom = roomService.getRoomById(paramsDTO.getRoomId());
-        if (optionalRoom.isEmpty()) {
-            redirectAttributes.addFlashAttribute("mensajeError2", "La habitación seleccionada no existe.");
-            return "redirect:/rooms/listRooms";
-        }
+            Double totalPrice = reservationService.totalPrice(paramsDTO.getCheckInDate(), paramsDTO.getCheckOutDate(), paramsDTO.getNumbersRoom(), paramsDTO.getNightPrice());
 
-        Room room = optionalRoom.get();
-        int availableRooms = roomService.countAvailableRooms(room, paramsDTO.getCheckInDate(), paramsDTO.getCheckOutDate());
-        if (paramsDTO.getNumbersRoom() > availableRooms) {
-            redirectAttributes.addFlashAttribute("mensajeError2", "Solo quedan " + availableRooms + " habitaciones disponibles para las fechas seleccionadas.");
-            return "redirect:/rooms/listRooms";
-        }
-
-        Double totalPrice = reservationService.totalPrice(paramsDTO.getCheckInDate(), paramsDTO.getCheckOutDate(), paramsDTO.getNumbersRoom(), paramsDTO.getNightPrice());
-
-        try {
-            ReservationDTO reservationDTO = reservationService.prepareReservation(paramsDTO, currentUser.get(), totalPrice);
+            ReservationDTO reservationDTO = reservationService.prepareReservation(paramsDTO, currentUser, totalPrice);
             model.addAttribute("reservationDTO", reservationDTO);
             return "createReservation";
+
+        }catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
-            return "redirect:/rooms/listRooms";
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/rooms";
         }
     }
 
     @PostMapping("/createReservation")
     public String createReservation(@Valid @ModelAttribute("reservationDTO")ReservationDTO reservationDTO,
                                     BindingResult bindingResult,
-                                    Model model) {
+                                    RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "createReservation";
         }
         reservationService.createReservation(reservationDTO);
-        model.addAttribute("mesage","Reserva creada exitosamente");
-        return "redirect:/rooms/listRooms";
+        redirectAttributes.addFlashAttribute("successMessage","Reserva creada exitosamente");
+        return "redirect:/rooms";
     }
 
     @GetMapping("/listReservations")
@@ -103,7 +80,7 @@ public class ReservationController {
         model.addAttribute("totalPages", reservationPage.getTotalPages());
         model.addAttribute("totalItems", reservationPage.getTotalElements());
 
-        return "listReservations";
+        return "reservations";
     }
 
     @GetMapping("/listUserReservation")
@@ -126,10 +103,10 @@ public class ReservationController {
     public String deleteReservation(@PathVariable Long id,RedirectAttributes redirectAttributes){
         try {
             reservationService.deleteReservation(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Reservation deleted successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Se ha eliminado la reserva correctamente.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting reservation: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/users/home";
+        return "redirect:/home";
     }
 }

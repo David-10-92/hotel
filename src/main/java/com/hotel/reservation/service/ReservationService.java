@@ -1,8 +1,10 @@
 package com.hotel.reservation.service;
 
+import com.hotel.user.errors.UserNotAuthenticatedException;
 import com.hotel.reservation.dtos.ReservationDTO;
 import com.hotel.reservation.dtos.ReservationParamsDTO;
 import com.hotel.reservation.model.Reservation;
+import com.hotel.room.model.Room;
 import com.hotel.user.model.User;
 import org.springframework.data.domain.Page;
 
@@ -19,4 +21,6 @@ public interface ReservationService {
     Page<Reservation> getAllReservation(int page, int size);
     Page<Reservation> getReservationsByUser(String username, int page, int size);
     ReservationDTO prepareReservation(ReservationParamsDTO paramsDTO, User currentUser, Double totalPrice);
+    User getCurrentUser() throws UserNotAuthenticatedException;
+    Room validateRoom(Long roomId);
 }
