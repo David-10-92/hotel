@@ -14,8 +14,12 @@
         <a class="btn btn-primary" th:href="@{/home}">Home</a>
     </nav>
     <div class="container mt-4">
-        <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info"></span>
-        <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
+        <div class="row">
+            <div class="col">
+                <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info d-block mb-3"></span>
+                <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger d-block mb-3"></span>
+            </div>
+        </div>
     </div>
     <!-- Sección para tipo "Tipo Individual" -->
     <div class="mb-5">

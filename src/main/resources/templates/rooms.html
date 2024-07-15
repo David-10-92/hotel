@@ -29,9 +29,13 @@
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
-    <div class="container">
-        <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info"></span>
-        <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info d-block mb-3"></span>
+                <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger d-block mb-3"></span>
+            </div>
+        </div>
     </div>
 
     <div class="row">

@@ -8,6 +8,9 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Hotel Continental</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item" sec:authorize="isAuthenticated()">
@@ -21,7 +24,6 @@
                     <button class="btn btn-outline-danger" type="submit">Cerrar sesión</button>
                 </form>
             </li>
-
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                 <a class="nav-link dropdown-toggle" href="#" id="adminMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Administrar
@@ -41,25 +43,35 @@
     </div>
 </nav>
 
-<div class="container text-center my-2">
-    <form th:action="@{/rooms}" method="get" th:object="${dateRange}" class="form-inline justify-content-center">
-        <h5 class="mb-2">Buscador de habitaciones:</h5>
-        <div class="form-group mr-2">
-            <label for="checkInDate" class="mr-2">Check-in Date:</label>
-            <input type="date" id="checkInDate" th:field="*{checkInDate}" class="form-control" th:attr="min=${today}">
+<div class="container my-5">
+    <div class="row">
+        <div class="col text-center">
+            <h5 class="mb-4">Buscador de habitaciones:</h5>
+            <form th:action="@{/rooms}" method="get" th:object="${dateRange}" class="form-inline justify-content-center">
+                <div class="form-group mr-3">
+                    <label for="checkInDate" class="mr-2">Check-in Date:</label>
+                    <input type="date" id="checkInDate" th:field="*{checkInDate}" class="form-control" th:attr="min=${today}">
+                </div>
+                <div class="form-group mr-3">
+                    <label for="checkOutDate" class="mr-2">Check-out Date:</label>
+                    <input type="date" id="checkOutDate" th:field="*{checkOutDate}" class="form-control" th:attr="min=${tomorrow}">
+                </div>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
         </div>
-        <div class="form-group mr-2">
-            <label for="checkOutDate" class="mr-2">Check-out Date:</label>
-            <input type="date" id="checkOutDate" th:field="*{checkOutDate}" class="form-control" th:attr="min=${tomorrow}">
-        </div>
-        <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
+    </div>
 </div>
+
 <div class="container mt-4">
-    <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info"></span>
-    <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></span>
+    <div class="row">
+        <div class="col">
+            <span th:if="${successMessage}" th:text="${successMessage}" class="alert alert-info d-block mb-3"></span>
+            <span th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger d-block mb-3"></span>
+        </div>
+    </div>
 </div>
-<div class="container">
+
+<div class="container mb-5">
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
             <li th:each="image, iterStat : ${imageNames}" th:data-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0 ? ' active' : ''}"></li>
