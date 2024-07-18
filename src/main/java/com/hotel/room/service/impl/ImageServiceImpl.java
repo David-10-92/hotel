@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -72,5 +75,19 @@ public class ImageServiceImpl implements ImageService {
             imageRepository.delete(image);
             return true;
         }).orElseThrow(() -> new ImageNotFoundException("Imagen no encontrada"));
+    }
+
+    @Override
+    public List<String> getImageNames() {
+        List<String> imageNames = new ArrayList<>();
+        try {
+            Path uploadPath = Paths.get("src/main/resources/static/uploads");
+            Files.walk(uploadPath, 1).filter(Files::isRegularFile).forEach(file -> {
+                imageNames.add("/uploads/" + file.getFileName().toString());
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imageNames;
     }
 }
