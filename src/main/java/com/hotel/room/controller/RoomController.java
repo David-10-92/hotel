@@ -87,7 +87,7 @@ public class RoomController {
         LocalDate checkOutDate = dateRange.getCheckOutDate();
 
         if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
-            redirectAttributes.addFlashAttribute("message", "La fecha de check-out debe ser posterior a la fecha de check-in.");
+            redirectAttributes.addFlashAttribute("errorMessage", "La fecha de check-out debe ser posterior a la fecha de check-in.");
             return "redirect:/rooms";
         }
 
