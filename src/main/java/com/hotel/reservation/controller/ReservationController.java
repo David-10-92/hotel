@@ -69,7 +69,7 @@ public class ReservationController {
         return "redirect:/rooms";
     }
 
-    @GetMapping("/listReservations")
+    @GetMapping()
     public String searchReservations(Model model,
                                      @RequestParam(name = "page", defaultValue = "0") int page,
                                      @RequestParam(name = "size", defaultValue = "5") int size) {
@@ -79,6 +79,7 @@ public class ReservationController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", reservationPage.getTotalPages());
         model.addAttribute("totalItems", reservationPage.getTotalElements());
+        model.addAttribute("size", size);
 
         return "reservations";
     }
@@ -95,6 +96,7 @@ public class ReservationController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", reservationPage.getTotalPages());
         model.addAttribute("totalItems", reservationPage.getTotalElements());
+        model.addAttribute("size", size);
 
         return "listUserReservation";
     }

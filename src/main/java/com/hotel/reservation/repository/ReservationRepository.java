@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    List<Reservation> findByRoomIdAndCheckInDateLessThanEqualAndCheckOutDateGreaterThanEqual(Long roomId, LocalDate checkOutDate, LocalDate checkInDate);
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.room = :room AND " +
             "(r.checkInDate < :checkOutDate AND r.checkOutDate > :checkInDate)")
     int countReservationsByRoomAndDateRange(@Param("room") Room room,
