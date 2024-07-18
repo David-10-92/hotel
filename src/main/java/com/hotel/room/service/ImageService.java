@@ -13,5 +13,5 @@ public interface ImageService {
     List<Image> createImage(ImageDTO input,MultipartFile[] file);
     Optional<Image> editImage(Long id, ImageDTO input,MultipartFile file);
     boolean deleteImage(Long id);
-
+    List<String> getImageNames();
 }
