@@ -14,7 +14,7 @@
 
     <!-- Navigation -->
     <nav class="mb-4">
-        <a class="btn btn-primary" th:href="@{/users/home}">Home</a>
+        <a class="btn btn-primary" th:href="@{/home}">Home</a>
     </nav>
 
     <!-- Table -->
@@ -43,15 +43,15 @@
     <nav aria-label="Page navigation">
         <ul class="pagination">
             <li th:if="${currentPage > 0}" class="page-item">
-                <a class="page-link" th:href="@{/users/listUsers(page=${currentPage - 1}, size=${size})}">&laquo; Previous</a>
+                <a class="page-link" th:href="@{/users(page=${currentPage - 1}, size=${size})}">&laquo; Previous</a>
             </li>
             <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
                 th:classappend="${pageNum == currentPage} ? 'active' : ''" class="page-item">
-                <a class="page-link" th:href="@{/users/listUsers(page=${pageNum}, size=${size})}"
+                <a class="page-link" th:href="@{/users(page=${pageNum}, size=${size})}"
                    th:text="${pageNum + 1}"></a>
             </li>
             <li th:if="${currentPage < totalPages - 1}" class="page-item">
-                <a class="page-link" th:href="@{/users/listUsers(page=${currentPage + 1}, size=${size})}">Next &raquo;</a>
+                <a class="page-link" th:href="@{/users(page=${currentPage + 1}, size=${size})}">Next &raquo;</a>
             </li>
         </ul>
     </nav>
