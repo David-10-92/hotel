@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface ReservationService {
     Reservation createReservation(ReservationDTO reservationDTO);
     Optional<Reservation> getReservationById(Long id);
-    Page<Reservation> getAllReservations(int page, int size);
     Optional<Reservation> updateReservation(Long id, ReservationDTO reservationDTO);
     void deleteReservation(Long id);
     Double totalPrice(LocalDate checkInDate, LocalDate checkOutDate,int numberOfRooms,Double nightPrice);

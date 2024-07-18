@@ -68,13 +68,6 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findById(id);
     }
 
-    @Override
-    public Page<Reservation> getAllReservations(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
-        List<Reservation> reservationList = reservationRepository.findAll();
-        return new PageImpl<>(reservationList, pageable, reservationPage.getTotalElements());
-    }
 
     @Override
     public Page<Reservation> getAllReservation(int page, int size) {
