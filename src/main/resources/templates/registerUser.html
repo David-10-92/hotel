@@ -29,8 +29,6 @@
                             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></span>
                         </div>
 
-                        <input type="hidden" th:field="*{rol}" value="ROLE_CLIENT" />
-
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary btn-block">Registrar</button>
                         </div>

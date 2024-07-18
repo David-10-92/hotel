@@ -2,14 +2,13 @@ package com.hotel.user.service.impl;
 
 import com.hotel.user.dtos.UserDTO;
 import com.hotel.user.errors.EmailAlreadyInUseException;
-import com.hotel.user.errors.UnauthorizedException;
+import com.hotel.user.errors.InvalidUserException;
 import com.hotel.user.model.User;
 import com.hotel.user.repository.UserRepository;
 import com.hotel.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -17,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,7 +34,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
-        user.setRol(input.getRol());
+        user.setRol("ROLE_CLIENT");
         return userRepository.save(user);
     }
 
@@ -46,24 +44,23 @@ public class UserServiceImpl implements UserService {
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
             User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+                    .orElseThrow(() -> new InvalidUserException("Usuario no encontrado"));
             return mapUserToDTO(user);
         } else {
-            throw new UnauthorizedException("Usuario no autenticado");
+            throw new InvalidUserException("Usuario no autenticado");
         }
     }
 
     @Override
     public Optional<User> findByEmail(String username) {
         return Optional.ofNullable(userRepository.findByEmail(username)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el correo.")));
+                .orElseThrow(() -> new InvalidUserException("Usuario no encontrado con el correo.")));
     }
 
     private UserDTO mapUserToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
-        userDTO.setRol(user.getRol());
 
         return userDTO;
     }
@@ -79,14 +76,14 @@ public class UserServiceImpl implements UserService {
             if (input.getPassword() != null && !input.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(input.getPassword()));
             }
-            user.setRol(input.getRol());
+            user.setRol("ROLE_CLIENT");
             return userRepository.save(user);
         });
     }
 
     @Override
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        User user = userRepository.findById(id).orElseThrow(() -> new InvalidUserException("Usuario no encontrado"));
         userRepository.delete(user);
     }
 
@@ -103,8 +100,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> reservationPage = userRepository.findAll(pageable);
-        List<User> reservationList = userRepository.findAll();
-        return new PageImpl<>(reservationList, pageable, reservationPage.getTotalElements());
+        return userRepository.findAll(pageable);
     }
 }

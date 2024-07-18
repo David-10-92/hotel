@@ -2,7 +2,7 @@ package com.hotel.user.controller;
 
 import com.hotel.user.dtos.UserDTO;
 import com.hotel.user.errors.EmailAlreadyInUseException;
-import com.hotel.user.errors.UnauthorizedException;
+import com.hotel.user.errors.InvalidUserException;
 import com.hotel.user.model.User;
 import com.hotel.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -44,6 +44,9 @@ public class UserController {
         } catch (EmailAlreadyInUseException e) {
             model.addAttribute("emailError", e.getMessage());
             return "registerUser";
+        }catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ocurrió un error inesperado. Por favor, intente nuevamente.");
+            return "redirect:/home";
         }
         return "login";
     }
@@ -59,11 +62,8 @@ public class UserController {
             UserDTO userDTO = userService.getCurrentUserDTO();
             model.addAttribute("userDTO", userDTO);
             return "editUser";
-        } catch (EntityNotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Usuario no encontrado. Por favor, inicie sesión nuevamente.");
-            return "redirect:/login";
-        } catch (UnauthorizedException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Usuario no autenticado. Por favor, inicie sesión.");
+        } catch (InvalidUserException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/login";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Ocurrió un error inesperado. Por favor, intente nuevamente.");
@@ -107,6 +107,9 @@ public class UserController {
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "deleteUser";
+        }catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ocurrió un error inesperado. Por favor, intente nuevamente.");
+            return "redirect:/home";
         }
     }
 
@@ -120,6 +123,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", usersPage.getTotalPages());
         model.addAttribute("totalItems", usersPage.getTotalElements());
-        return "listUsers";
+        model.addAttribute("size", size);
+        return "users";
     }
 }
