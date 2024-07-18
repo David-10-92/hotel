@@ -1,7 +1,7 @@
 package com.hotel.home.controller;
 
-import com.hotel.home.service.HomeService;
 import com.hotel.room.dtos.DateRangeDTO;
+import com.hotel.room.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,11 +16,11 @@ import java.util.List;
 public class HomeController {
 
     @Autowired
-    HomeService homeService;
+    ImageService imageService;
 
     @GetMapping
     public String home(Model model){
-        List<String> imageNames = homeService.getImageNames();
+        List<String> imageNames = imageService.getImageNames();
         model.addAttribute("imageNames", imageNames);
         model.addAttribute("dateRange", new DateRangeDTO());
         model.addAttribute("today", LocalDate.now());
