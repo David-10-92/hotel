@@ -93,10 +93,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Room> findAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate) {
-        List<Room> allRooms = roomRepository.findAll();
-        return allRooms.stream()
-                .filter(room -> isRoomAvailable(room, checkInDate, checkOutDate))
-                .collect(Collectors.toList());
+        return roomRepository.findAvailableRooms(checkInDate, checkOutDate);
     }
 
     private void updateRoomFields(Room room, RoomDTO input,MultipartFile file) {
@@ -106,11 +103,6 @@ public class RoomServiceImpl implements RoomService {
         room.setTypeRoom(input.getTypeRoom());
         String fileUrl = "/uploads/" + file.getOriginalFilename();
         room.setImage(fileUrl);
-    }
-
-    private boolean isRoomAvailable(Room room, LocalDate checkInDate, LocalDate checkOutDate) {
-        int reservedCount = reservationRepository.countReservationsByRoomAndDateRange(room, checkInDate, checkOutDate);
-        return reservedCount < room.getNumbersRoom();
     }
 
     @Override
