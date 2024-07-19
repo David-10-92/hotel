@@ -1,12 +1,12 @@
 package com.hotel.reservation.controller;
 
-import com.hotel.user.errors.UserNotAuthenticatedException;
 import com.hotel.reservation.dtos.ReservationDTO;
 import com.hotel.reservation.dtos.ReservationParamsDTO;
 import com.hotel.reservation.model.Reservation;
 import com.hotel.reservation.service.ReservationService;
 import com.hotel.room.model.Room;
 import com.hotel.room.service.RoomService;
+import com.hotel.user.errors.InvalidUserException;
 import com.hotel.user.model.User;
 import com.hotel.user.service.UserService;
 import jakarta.validation.Valid;
@@ -49,7 +49,7 @@ public class ReservationController {
             model.addAttribute("reservationDTO", reservationDTO);
             return "createReservation";
 
-        }catch (UserNotAuthenticatedException e) {
+        }catch (InvalidUserException e) {
             return "redirect:/users/login";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());

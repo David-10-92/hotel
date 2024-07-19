@@ -6,7 +6,6 @@ import com.hotel.user.errors.InvalidUserException;
 import com.hotel.user.model.User;
 import com.hotel.user.repository.UserRepository;
 import com.hotel.user.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
-        user.setRol("ROLE_CLIENT");
+        user.setRol(input.getRol() != null ? input.getRol() : "ROLE_CLIENT");
         return userRepository.save(user);
     }
 
@@ -76,7 +75,6 @@ public class UserServiceImpl implements UserService {
             if (input.getPassword() != null && !input.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(input.getPassword()));
             }
-            user.setRol("ROLE_CLIENT");
             return userRepository.save(user);
         });
     }

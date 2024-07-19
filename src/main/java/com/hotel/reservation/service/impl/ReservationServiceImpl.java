@@ -1,6 +1,5 @@
 package com.hotel.reservation.service.impl;
 
-import com.hotel.user.errors.UserNotAuthenticatedException;
 import com.hotel.reservation.dtos.ReservationDTO;
 import com.hotel.reservation.dtos.ReservationParamsDTO;
 import com.hotel.reservation.model.Reservation;
@@ -8,11 +7,11 @@ import com.hotel.reservation.repository.ReservationRepository;
 import com.hotel.reservation.service.ReservationService;
 import com.hotel.room.model.Room;
 import com.hotel.room.repository.RoomRepository;
+import com.hotel.user.errors.InvalidUserException;
 import com.hotel.user.model.User;
 import com.hotel.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -142,11 +140,11 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    public User getCurrentUser() throws UserNotAuthenticatedException {
+    public User getCurrentUser() throws InvalidUserException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         return userRepository.findByEmail(currentUsername)
-                .orElseThrow(() ->  new UserNotAuthenticatedException("Usuario no autenticado"));
+                .orElseThrow(() ->  new InvalidUserException("Usuario no autenticado"));
     }
 
     public Room validateRoom(Long roomId) {
